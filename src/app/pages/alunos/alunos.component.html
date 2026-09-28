@@ -1,0 +1,232 @@
+<section class="alunos-page">
+
+  <div class="page-heading">
+
+    <div>
+
+      <h2>
+        Alunos
+      </h2>
+
+      <p>
+        Consulte os alunos cadastrados no MOD – Gestão Musical.
+      </p>
+
+    </div>
+
+    <div class="total-box">
+
+      <span>
+        Total
+      </span>
+
+      <strong>
+        {{ alunosFiltrados.length }}
+      </strong>
+
+    </div>
+
+  </div>
+
+
+  <div class="alunos-panel">
+
+    <div class="toolbar">
+
+      <div class="search-field">
+
+        <span>
+          ⌕
+        </span>
+
+        <input
+          type="text"
+          [(ngModel)]="filtro"
+          (input)="filtrar()"
+          placeholder="Buscar por nome, comum, nível ou ministério..."
+        >
+
+      </div>
+
+      @if (filtro) {
+
+      <button
+        class="clear-button"
+        type="button"
+        (click)="limparFiltro()"
+      >
+        Limpar
+      </button>
+
+      }
+
+    </div>
+
+
+    @if (carregando) {
+
+    <div class="state-message">
+
+      <strong>
+        Carregando alunos...
+      </strong>
+
+    </div>
+
+    } @else if (erro) {
+
+    <div class="state-message error">
+
+      <strong>
+        {{ erro }}
+      </strong>
+
+    </div>
+
+    } @else if (alunosFiltrados.length === 0) {
+
+    <div class="state-message">
+
+      <strong>
+        Nenhum aluno encontrado.
+      </strong>
+
+    </div>
+
+    } @else {
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+
+        <tr>
+
+          <th>
+            Nome
+          </th>
+
+          <th>
+            Comum
+          </th>
+
+          <th>
+            Nível
+          </th>
+
+          <th>
+            Cargo / Ministério
+          </th>
+
+          <th>
+            Instrumento
+          </th>
+
+          <th>
+            Situação
+          </th>
+
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        @for (
+        aluno of alunosFiltrados;
+        track aluno.id
+        ) {
+
+        <tr>
+
+          <td class="student-name">
+
+            <div class="student-avatar">
+              ♫
+            </div>
+
+            <div>
+
+              <strong>
+                {{ aluno.nome }}
+              </strong>
+
+              <small>
+                ID {{ aluno.id }}
+              </small>
+
+            </div>
+
+          </td>
+
+          <td>
+            {{
+            aluno.comumNome
+            || 'Não informado'
+            }}
+          </td>
+
+          <td>
+            {{
+            aluno.nivelNome
+            || 'Não informado'
+            }}
+          </td>
+
+          <td>
+            {{
+            aluno.cargoMinisterioNome
+            || 'Não informado'
+            }}
+          </td>
+
+          <td>
+
+            @if (aluno.possuiInstrumento) {
+
+            <span class="instrument yes">
+                      Sim
+                    </span>
+
+            } @else {
+
+            <span class="instrument no">
+                      Não
+                    </span>
+
+            }
+
+          </td>
+
+          <td>
+
+                  <span
+                    class="status"
+                    [class]="
+                      'status ' +
+                      classeSituacao(
+                        aluno.situacao
+                      )
+                    "
+                  >
+                    {{ aluno.situacao }}
+                  </span>
+
+          </td>
+
+        </tr>
+
+        }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    }
+
+  </div>
+
+</section>

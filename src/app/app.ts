@@ -1,6 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnInit
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
+
+import {
+  Router,
+  RouterLink,
+  RouterLinkActive,
+  RouterOutlet
+} from '@angular/router';
 
 import {
   DashboardAlunosPorComum,
@@ -12,10 +23,15 @@ import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
+
   imports: [
     CommonModule,
-    FormsModule
+    FormsModule,
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive
   ],
+
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -24,8 +40,6 @@ export class App implements OnInit {
   dashboard: DashboardResponse | null = null;
 
   carregando = false;
-  erro = '';
-
   autenticado = false;
 
   email = '';
@@ -33,10 +47,24 @@ export class App implements OnInit {
 
   mensagemLogin = '';
 
+  private erroLogin = '';
+  private erroDashboard = '';
+
   constructor(
     private readonly dashboardService: DashboardService,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly router: Router,
+    private readonly cdr: ChangeDetectorRef
   ) {
+  }
+
+  get erro(): string {
+
+    if (this.autenticado) {
+      return this.erroDashboard;
+    }
+
+    return this.erroLogin;
   }
 
   ngOnInit(): void {
@@ -50,13 +78,26 @@ export class App implements OnInit {
       .subscribe({
 
         next: () => {
+
           this.autenticado = true;
+
+          this.erroLogin = '';
+          this.erroDashboard = '';
+
+          this.cdr.detectChanges();
+
           this.carregarDashboard();
         },
 
         error: () => {
+
           this.autenticado = false;
+
           this.dashboard = null;
+
+          this.erroDashboard = '';
+
+          this.cdr.detectChanges();
         }
 
       });
@@ -64,29 +105,52 @@ export class App implements OnInit {
 
   login(): void {
 
-    this.erro = '';
+    this.erroLogin = '';
+    this.erroDashboard = '';
     this.mensagemLogin = '';
 
-    if (!this.email || !this.senha) {
-      this.erro = 'Informe o e-mail e a senha.';
+    if (
+      !this.email.trim() ||
+      !this.senha
+    ) {
+
+      this.autenticado = false;
+
+      this.erroLogin =
+        'Informe o e-mail e a senha.';
+
+      this.cdr.detectChanges();
+
       return;
     }
 
     this.authService
-      .login(this.email, this.senha)
+      .login(
+        this.email.trim(),
+        this.senha
+      )
       .subscribe({
 
         next: (resposta) => {
 
+          this.autenticado = true;
+
+          this.erroLogin = '';
+          this.erroDashboard = '';
+
           this.mensagemLogin =
             resposta.mensagem;
 
-          this.autenticado = true;
-
           this.senha = '';
 
-          this.carregarDashboard();
+          this.router
+            .navigateByUrl('/dashboard')
+            .then(() => {
 
+              this.cdr.detectChanges();
+
+              this.carregarDashboard();
+            });
         },
 
         error: (erro) => {
@@ -98,18 +162,22 @@ export class App implements OnInit {
 
           this.autenticado = false;
 
+          this.dashboard = null;
+
+          this.erroDashboard = '';
+
           if (erro.status === 401) {
 
-            this.erro =
+            this.erroLogin =
               'E-mail ou senha inválidos.';
 
           } else {
 
-            this.erro =
+            this.erroLogin =
               'Não foi possível realizar o login.';
-
           }
 
+          this.cdr.detectChanges();
         }
 
       });
@@ -117,21 +185,17 @@ export class App implements OnInit {
 
   logout(): void {
 
+    this.erroLogin = '';
+    this.erroDashboard = '';
+    this.mensagemLogin = '';
+
     this.authService
       .logout()
       .subscribe({
 
         next: () => {
 
-          this.autenticado = false;
-          this.dashboard = null;
-
-          this.email = '';
-          this.senha = '';
-
-          this.erro = '';
-          this.mensagemLogin = '';
-
+          this.limparSessaoLocal();
         },
 
         error: (erro) => {
@@ -141,18 +205,45 @@ export class App implements OnInit {
             erro
           );
 
-          this.erro =
+          this.erroDashboard =
             'Não foi possível encerrar a sessão.';
 
+          this.cdr.detectChanges();
         }
 
+      });
+  }
+
+  private limparSessaoLocal(): void {
+
+    this.autenticado = false;
+
+    this.dashboard = null;
+
+    this.carregando = false;
+
+    this.email = '';
+    this.senha = '';
+
+    this.erroLogin = '';
+    this.erroDashboard = '';
+
+    this.mensagemLogin = '';
+
+    this.router
+      .navigateByUrl('/dashboard')
+      .then(() => {
+        this.cdr.detectChanges();
       });
   }
 
   carregarDashboard(): void {
 
     this.carregando = true;
-    this.erro = '';
+
+    this.erroDashboard = '';
+
+    this.cdr.detectChanges();
 
     this.dashboardService
       .buscarDashboardSecretaria()
@@ -162,8 +253,11 @@ export class App implements OnInit {
 
           this.dashboard = dados;
 
+          this.erroDashboard = '';
+
           this.carregando = false;
 
+          this.cdr.detectChanges();
         },
 
         error: (erro) => {
@@ -173,35 +267,51 @@ export class App implements OnInit {
             erro
           );
 
+          this.carregando = false;
+
           if (erro.status === 401) {
+
+            this.dashboard = null;
 
             this.autenticado = false;
 
-            this.erro =
-              'Sessão não autenticada.';
+            this.erroDashboard = '';
+
+            this.erroLogin =
+              'Sua sessão expirou. Faça login novamente.';
 
           } else if (erro.status === 403) {
 
-            this.erro =
+            this.erroDashboard =
               'O usuário autenticado não possui permissão para acessar o Dashboard da Secretaria.';
 
           } else {
 
-            this.erro =
+            this.erroDashboard =
               'Não foi possível carregar os dados do Dashboard.';
-
           }
 
-          this.carregando = false;
-
+          this.cdr.detectChanges();
         }
 
       });
   }
 
+  estaNoDashboard(): boolean {
+
+    return (
+      this.router.url === '/' ||
+      this.router.url === '/dashboard' ||
+      this.router.url.startsWith('/dashboard?')
+    );
+  }
+
   percentualAtivos(): number {
 
-    if (!this.dashboard || this.dashboard.totalAlunos === 0) {
+    if (
+      !this.dashboard ||
+      this.dashboard.totalAlunos === 0
+    ) {
       return 0;
     }
 
@@ -213,7 +323,10 @@ export class App implements OnInit {
 
   percentualArquivados(): number {
 
-    if (!this.dashboard || this.dashboard.totalAlunos === 0) {
+    if (
+      !this.dashboard ||
+      this.dashboard.totalAlunos === 0
+    ) {
       return 0;
     }
 
@@ -223,17 +336,27 @@ export class App implements OnInit {
     ) * 100;
   }
 
-  alturaBarra(item: DashboardAlunosPorComum): number {
+  alturaBarra(
+    item: DashboardAlunosPorComum
+  ): number {
 
-    if (!this.dashboard?.alunosPorComum.length) {
+    if (
+      !this.dashboard
+        ?.alunosPorComum
+        ?.length
+    ) {
       return 0;
     }
 
-    const maiorQuantidade = Math.max(
-      ...this.dashboard.alunosPorComum.map(
-        comum => comum.quantidade
-      )
-    );
+    const maiorQuantidade =
+      Math.max(
+        ...this.dashboard
+          .alunosPorComum
+          .map(
+            comum =>
+              comum.quantidade
+          )
+      );
 
     if (maiorQuantidade === 0) {
       return 0;
@@ -245,7 +368,9 @@ export class App implements OnInit {
     ) * 80;
   }
 
-  nomeEvento(tipoEvento: string): string {
+  nomeEvento(
+    tipoEvento: string
+  ): string {
 
     const nomes: Record<string, string> = {
 

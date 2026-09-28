@@ -1,0 +1,564 @@
+:host {
+  display: block;
+
+  width: 100%;
+  min-width: 0;
+}
+
+
+/* ======================================================
+   PÁGINA
+   ====================================================== */
+
+.historico-page {
+  width: 100%;
+  min-width: 0;
+
+  padding:
+    6px
+    0
+    0;
+}
+
+.page-heading {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  margin-bottom: 14px;
+}
+
+.page-heading h2 {
+  margin: 0;
+
+  font-size: 24px;
+  font-weight: 700;
+
+  color: #102d52;
+}
+
+.page-heading p {
+  margin:
+    4px 0 0;
+
+  color: #687386;
+
+  font-size: 13px;
+}
+
+.total-box {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  flex: 0 0 auto;
+
+  padding:
+    8px
+    12px;
+
+  border:
+    1px solid
+    #dbe3ee;
+
+  border-radius: 8px;
+
+  background: #ffffff;
+}
+
+.total-box span {
+  font-size: 12px;
+
+  color: #6b7687;
+}
+
+.total-box strong {
+  font-size: 17px;
+
+  color: #173b63;
+}
+
+
+/* ======================================================
+   PAINEL
+   ====================================================== */
+
+.historico-panel {
+  width: 100%;
+  min-width: 0;
+
+  background: #ffffff;
+
+  border:
+    1px solid
+    #e1e7ef;
+
+  border-radius: 10px;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 2px 8px
+    rgba(
+      16,
+      45,
+      82,
+      0.04
+    );
+}
+
+
+/* ======================================================
+   BUSCA
+   ====================================================== */
+
+.toolbar {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding:
+    13px
+    16px;
+
+  border-bottom:
+    1px solid
+    #e8edf3;
+
+  background: #ffffff;
+}
+
+.search-field {
+  display: flex;
+
+  align-items: center;
+
+  width:
+    min(
+      100%,
+      615px
+    );
+
+  gap: 8px;
+
+  padding:
+    0 11px;
+
+  border:
+    1px solid
+    #ccd7e3;
+
+  border-radius: 7px;
+
+  background: #ffffff;
+}
+
+.search-field span {
+  color: #58708f;
+
+  font-size: 14px;
+}
+
+.search-field input {
+  width: 100%;
+
+  min-width: 0;
+
+  padding:
+    9px 0;
+
+  border: none;
+
+  outline: none;
+
+  font-size: 12px;
+
+  color: #26384e;
+
+  background:
+    transparent;
+}
+
+.clear-button {
+  padding:
+    8px
+    14px;
+
+  border:
+    1px solid
+    #ccd7e3;
+
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #284b72;
+
+  cursor: pointer;
+
+  font-size: 12px;
+}
+
+
+/* ======================================================
+   ÁREA DA TABELA
+   ====================================================== */
+
+.table-wrapper {
+  width: 100%;
+
+  min-width: 0;
+
+  max-height:
+    calc(
+      100vh - 235px
+    );
+
+  /*
+   * Apenas rolagem vertical.
+   * A tabela passa a caber na largura disponível.
+   */
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  position: relative;
+}
+
+
+/* ======================================================
+   TABELA
+   ====================================================== */
+
+table {
+  width: 100%;
+
+  min-width: 0;
+
+  border-collapse:
+    separate;
+
+  border-spacing: 0;
+
+  table-layout: fixed;
+
+  font-size: 11px;
+}
+
+
+/* ======================================================
+   CABEÇALHO FIXO
+   ====================================================== */
+
+thead th {
+  position: sticky;
+
+  top: 0;
+
+  z-index: 5;
+
+  padding:
+    9px
+    8px;
+
+  text-align: left;
+
+  font-size: 10.5px;
+  font-weight: 700;
+
+  color: #53647a;
+
+  background: #f7f9fc;
+
+  border-bottom:
+    1px solid
+    #dce4ed;
+
+  white-space: nowrap;
+}
+
+
+/* ======================================================
+   LARGURAS DAS COLUNAS
+   ====================================================== */
+
+/* Data */
+thead th:nth-child(1),
+tbody td:nth-child(1) {
+  width: 11%;
+}
+
+/* Aluno */
+thead th:nth-child(2),
+tbody td:nth-child(2) {
+  width: 14%;
+}
+
+/* Evento */
+thead th:nth-child(3),
+tbody td:nth-child(3) {
+  width: 15%;
+}
+
+/* Usuário */
+thead th:nth-child(4),
+tbody td:nth-child(4) {
+  width: 12%;
+}
+
+/* Descrição */
+thead th:nth-child(5),
+tbody td:nth-child(5) {
+  width: 24%;
+}
+
+/* Valor anterior */
+thead th:nth-child(6),
+tbody td:nth-child(6) {
+  width: 12%;
+}
+
+/* Valor novo */
+thead th:nth-child(7),
+tbody td:nth-child(7) {
+  width: 12%;
+}
+
+
+/* ======================================================
+   CÉLULAS
+   ====================================================== */
+
+td {
+  padding:
+    9px
+    8px;
+
+  vertical-align: top;
+
+  color: #2e4056;
+
+  background: #ffffff;
+
+  border-bottom:
+    1px solid
+    #edf1f5;
+
+  font-size: 10.5px;
+
+  line-height: 1.35;
+
+  overflow-wrap: anywhere;
+}
+
+tbody tr:hover td {
+  background: #fafcff;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+
+/* ======================================================
+   DATA
+   ====================================================== */
+
+.date-cell {
+  color: #68788d;
+
+  font-size: 10px;
+
+  white-space: nowrap;
+}
+
+
+/* ======================================================
+   ALUNO
+   ====================================================== */
+
+tbody td:nth-child(2) strong {
+  color: #173b63;
+
+  line-height: 1.3;
+}
+
+
+/* ======================================================
+   EVENTO
+   ====================================================== */
+
+.event-badge {
+  display: inline-flex;
+
+  align-items: center;
+
+  max-width: 100%;
+
+  padding:
+    4px
+    7px;
+
+  border-radius: 12px;
+
+  background: #e8f1fd;
+
+  color: #2f6fbf;
+
+  font-size: 9.5px;
+  font-weight: 700;
+
+  line-height: 1.2;
+
+  white-space: normal;
+}
+
+
+/* ======================================================
+   DESCRIÇÃO
+   ====================================================== */
+
+.description-cell {
+  line-height: 1.4;
+
+  white-space: normal;
+}
+
+
+/* ======================================================
+   SITUAÇÃO
+   ====================================================== */
+
+.value-cell {
+  text-align: left;
+
+  vertical-align: middle;
+
+  white-space: nowrap;
+}
+
+.situation-badge {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-width: 72px;
+
+  padding:
+    5px
+    8px;
+
+  border-radius: 12px;
+
+  font-size: 9.5px;
+  font-weight: 700;
+}
+
+.situation-badge.ativo {
+  background: #def6e9;
+
+  color: #1f7849;
+}
+
+.situation-badge.arquivado {
+  background: #fff0dc;
+
+  color: #a86613;
+}
+
+.situation-badge.neutro {
+  background: #eef1f5;
+
+  color: #647386;
+}
+
+.no-value {
+  color: #9ba5b1;
+}
+
+
+/* ======================================================
+   ESTADOS
+   ====================================================== */
+
+.state-message {
+  min-height: 220px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding:
+    40px
+    20px;
+
+  text-align: center;
+
+  color: #748196;
+}
+
+.state-message.error {
+  color: #b43434;
+}
+
+
+/* ======================================================
+   SCROLL VERTICAL
+   ====================================================== */
+
+.table-wrapper::-webkit-scrollbar {
+  width: 10px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background: #edf1f5;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: #929aa5;
+
+  border:
+    2px solid
+    #edf1f5;
+
+  border-radius: 10px;
+}
+
+
+/* ======================================================
+   RESPONSIVIDADE
+   ====================================================== */
+
+@media (
+max-width: 900px
+) {
+
+  .page-heading {
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
+  }
+
+  .toolbar {
+    align-items:
+      stretch;
+
+    flex-direction:
+      column;
+  }
+
+  .search-field {
+    width: auto;
+  }
+
+}

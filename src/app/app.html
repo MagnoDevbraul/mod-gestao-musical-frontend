@@ -5,18 +5,22 @@
   <div class="login-card">
 
     <div class="login-brand">
-      <div class="login-brand-icon">♫</div>
+
+      <div class="login-brand-icon">
+        ♫
+      </div>
 
       <div>
         <h1>MOD</h1>
         <p>Gestão Musical</p>
       </div>
+
     </div>
 
     <h2>Acesso ao sistema</h2>
 
     <p class="login-subtitle">
-      Entre com suas credenciais para acessar o Dashboard.
+      Entre com suas credenciais para acessar o sistema.
     </p>
 
     <form (ngSubmit)="login()">
@@ -106,67 +110,113 @@
 
     <nav class="sidebar-menu">
 
-      <a class="menu-item active" href="#">
+      <!-- DASHBOARD -->
+      <a
+        class="menu-item"
+        routerLink="/dashboard"
+        routerLinkActive="active"
+      >
         <span class="menu-icon">⌂</span>
         <span>Dashboard</span>
       </a>
 
-      <a class="menu-item" href="#">
+      <!-- ALUNOS -->
+      <a
+        class="menu-item"
+        routerLink="/alunos"
+        routerLinkActive="active"
+      >
         <span class="menu-icon">♟</span>
         <span>Alunos</span>
       </a>
 
-      <a class="menu-item" href="#">
+      <!-- HISTÓRICO -->
+      <a
+        class="menu-item"
+        routerLink="/historico"
+        routerLinkActive="active"
+      >
         <span class="menu-icon">◷</span>
         <span>Histórico</span>
       </a>
 
-      <a class="menu-item" href="#">
+      <!-- AINDA NÃO IMPLEMENTADOS -->
+      <a
+        class="menu-item"
+        href="javascript:void(0)"
+      >
         <span class="menu-icon">▣</span>
         <span>Auditoria</span>
       </a>
 
-      <a class="menu-item" href="#">
+      <a
+        class="menu-item"
+        href="javascript:void(0)"
+      >
         <span class="menu-icon">●</span>
         <span>Notificações</span>
       </a>
 
-      <a class="menu-item" href="#">
+      <a
+        class="menu-item"
+        href="javascript:void(0)"
+      >
         <span class="menu-icon">↗</span>
         <span>Compartilhamentos</span>
       </a>
 
-      <a class="menu-item" href="#">
+      <a
+        class="menu-item"
+        href="javascript:void(0)"
+      >
         <span class="menu-icon">▥</span>
         <span>Exclusões</span>
       </a>
 
-      <a class="menu-item" href="#">
+      <a
+        class="menu-item"
+        href="javascript:void(0)"
+      >
         <span class="menu-icon">▣</span>
         <span>Alterações Restritas</span>
       </a>
 
-      <a class="menu-item" href="#">
+      <a
+        class="menu-item"
+        href="javascript:void(0)"
+      >
         <span class="menu-icon">●</span>
         <span>Comuns</span>
       </a>
 
-      <a class="menu-item" href="#">
+      <a
+        class="menu-item"
+        href="javascript:void(0)"
+      >
         <span class="menu-icon">▥</span>
         <span>Níveis</span>
       </a>
 
-      <a class="menu-item" href="#">
+      <a
+        class="menu-item"
+        href="javascript:void(0)"
+      >
         <span class="menu-icon">♟</span>
         <span>Cargos/Ministério</span>
       </a>
 
-      <a class="menu-item" href="#">
+      <a
+        class="menu-item"
+        href="javascript:void(0)"
+      >
         <span class="menu-icon">▤</span>
         <span>Relatórios</span>
       </a>
 
-      <a class="menu-item" href="#">
+      <a
+        class="menu-item"
+        href="javascript:void(0)"
+      >
         <span class="menu-icon">⚙</span>
         <span>Usuários e Permissões</span>
       </a>
@@ -183,25 +233,50 @@
     <header class="header">
 
       <div class="header-title">
-        <h1>MOD – Gestão Musical</h1>
-        <p>Dashboard da Secretaria</p>
+
+        <h1>
+          MOD – Gestão Musical
+        </h1>
+
+        @if (estaNoDashboard()) {
+
+        <p>
+          Dashboard da Secretaria
+        </p>
+
+        } @else {
+
+        <p>
+          Secretaria Musical
+        </p>
+
+        }
+
       </div>
 
       <div class="header-actions">
 
         <div class="search-box">
-          <span>⌕</span>
+
+            <span>
+              ⌕
+            </span>
 
           <input
             type="text"
             placeholder="Buscar aluno, comum, ministério..."
           >
+
         </div>
 
         <div class="notification-button">
+
           🔔
 
-          @if (dashboard && dashboard.notificacoes > 0) {
+          @if (
+          dashboard &&
+          dashboard.notificacoes > 0
+          ) {
 
           <span class="notification-badge">
                 {{ dashboard.notificacoes }}
@@ -218,8 +293,15 @@
           </div>
 
           <div class="user-info">
-            <strong>Secretaria Musical</strong>
-            <span>Administrador</span>
+
+            <strong>
+              Secretaria Musical
+            </strong>
+
+            <span>
+                Administrador
+              </span>
+
           </div>
 
           <button
@@ -237,12 +319,23 @@
     </header>
 
 
+    <!-- ================================= -->
+    <!-- DASHBOARD                         -->
+    <!-- ================================= -->
+
+    @if (estaNoDashboard()) {
+
+    <!-- CARREGAMENTO -->
     @if (carregando) {
 
     <section class="panel">
 
       <div class="panel-header">
-        <h2>Carregando Dashboard...</h2>
+
+        <h2>
+          Carregando Dashboard...
+        </h2>
+
       </div>
 
     </section>
@@ -250,12 +343,17 @@
     }
 
 
+    <!-- ERRO -->
     @if (!carregando && erro) {
 
     <section class="panel">
 
       <div class="panel-header">
-        <h2>{{ erro }}</h2>
+
+        <h2>
+          {{ erro }}
+        </h2>
+
       </div>
 
     </section>
@@ -263,11 +361,17 @@
     }
 
 
-    @if (!carregando && !erro && dashboard) {
+    <!-- CONTEÚDO DO DASHBOARD -->
+    @if (
+    !carregando &&
+    !erro &&
+    dashboard
+    ) {
 
     <!-- CARDS -->
     <section class="summary-grid">
 
+      <!-- TOTAL DE ALUNOS -->
       <article class="summary-card">
 
         <div class="summary-icon blue">
@@ -276,9 +380,9 @@
 
         <div class="summary-content">
 
-              <span class="summary-title">
-                Total de Alunos
-              </span>
+                <span class="summary-title">
+                  Total de Alunos
+                </span>
 
           <strong>
             {{ dashboard.totalAlunos }}
@@ -293,6 +397,7 @@
       </article>
 
 
+      <!-- ALUNOS ATIVOS -->
       <article class="summary-card">
 
         <div class="summary-icon green">
@@ -301,16 +406,19 @@
 
         <div class="summary-content">
 
-              <span class="summary-title">
-                Alunos Ativos
-              </span>
+                <span class="summary-title">
+                  Alunos Ativos
+                </span>
 
           <strong>
             {{ dashboard.alunosAtivos }}
           </strong>
 
           <small>
-            {{ percentualAtivos() | number:'1.1-1' }}% do total
+            {{
+            percentualAtivos()
+            | number:'1.1-1'
+            }}% do total
           </small>
 
         </div>
@@ -318,6 +426,7 @@
       </article>
 
 
+      <!-- ARQUIVADOS -->
       <article class="summary-card">
 
         <div class="summary-icon orange">
@@ -326,16 +435,19 @@
 
         <div class="summary-content">
 
-              <span class="summary-title">
-                Arquivados
-              </span>
+                <span class="summary-title">
+                  Arquivados
+                </span>
 
           <strong>
             {{ dashboard.alunosArquivados }}
           </strong>
 
           <small>
-            {{ percentualArquivados() | number:'1.1-1' }}% do total
+            {{
+            percentualArquivados()
+            | number:'1.1-1'
+            }}% do total
           </small>
 
         </div>
@@ -343,6 +455,7 @@
       </article>
 
 
+      <!-- ALTERAÇÕES PENDENTES -->
       <article class="summary-card">
 
         <div class="summary-icon purple">
@@ -351,9 +464,9 @@
 
         <div class="summary-content">
 
-              <span class="summary-title">
-                Alterações Pendentes
-              </span>
+                <span class="summary-title">
+                  Alterações Pendentes
+                </span>
 
           <strong>
             {{ dashboard.alteracoesPendentes }}
@@ -368,6 +481,7 @@
       </article>
 
 
+      <!-- NOTIFICAÇÕES -->
       <article class="summary-card">
 
         <div class="summary-icon red">
@@ -376,9 +490,9 @@
 
         <div class="summary-content">
 
-              <span class="summary-title">
-                Notificações
-              </span>
+                <span class="summary-title">
+                  Notificações
+                </span>
 
           <strong>
             {{ dashboard.notificacoes }}
@@ -395,7 +509,10 @@
     </section>
 
 
-    <!-- ÁREA CENTRAL -->
+    <!-- ================================= -->
+    <!-- ÁREA CENTRAL                     -->
+    <!-- ================================= -->
+
     <section class="dashboard-grid">
 
       <!-- ALUNOS POR COMUM -->
@@ -404,26 +521,34 @@
         <div class="panel-header">
 
           <h2>
-            <span class="panel-icon">▥</span>
+
+                  <span class="panel-icon">
+                    ▥
+                  </span>
+
             Alunos por Comum
+
           </h2>
 
         </div>
 
-        @if (dashboard.alunosPorComum.length > 0) {
+        @if (
+        (dashboard.alunosPorComum?.length ?? 0) > 0
+        ) {
 
         <div class="bar-chart">
 
           @for (
-          item of dashboard.alunosPorComum;
+          item of
+          (dashboard.alunosPorComum ?? []);
           track item.comum
           ) {
 
           <div class="bar-item">
 
-                    <span class="bar-number">
-                      {{ item.quantidade }}
-                    </span>
+                      <span class="bar-number">
+                        {{ item.quantidade }}
+                      </span>
 
             <div
               class="bar"
@@ -432,8 +557,8 @@
             </div>
 
             <span>
-                      {{ item.comum }}
-                    </span>
+                        {{ item.comum }}
+                      </span>
 
           </div>
 
@@ -458,8 +583,13 @@
         <div class="panel-header">
 
           <h2>
-            <span class="panel-icon">◔</span>
+
+                  <span class="panel-icon">
+                    ◔
+                  </span>
+
             Situação dos Alunos
+
           </h2>
 
         </div>
@@ -469,12 +599,14 @@
           <div
             class="donut-chart"
             [style.background]="
-                  'conic-gradient(' +
-                  '#3f8bd8 0% ' +
-                  percentualAtivos() + '%, ' +
-                  '#45bd7e ' +
-                  percentualAtivos() + '% 100%)'
-                "
+                    'conic-gradient(' +
+                    '#3f8bd8 0% ' +
+                    percentualAtivos() +
+                    '%, ' +
+                    '#45bd7e ' +
+                    percentualAtivos() +
+                    '% 100%)'
+                  "
           >
 
             <div class="donut-center">
@@ -484,18 +616,22 @@
               </strong>
 
               <span>
-                    alunos
-                  </span>
+                      alunos
+                    </span>
 
             </div>
 
           </div>
 
+
           <div class="chart-legend">
 
             <div class="legend-item">
 
-              <span class="legend-color active-color"></span>
+                    <span
+                      class="legend-color active-color"
+                    >
+                    </span>
 
               <div>
 
@@ -504,9 +640,12 @@
                 </strong>
 
                 <span>
-                      {{ dashboard.alunosAtivos }}
-                      ({{ percentualAtivos() | number:'1.1-1' }}%)
-                    </span>
+                        {{ dashboard.alunosAtivos }}
+                        ({{
+                          percentualAtivos()
+                            | number:'1.1-1'
+                        }}%)
+                      </span>
 
               </div>
 
@@ -515,7 +654,10 @@
 
             <div class="legend-item">
 
-              <span class="legend-color archived-color"></span>
+                    <span
+                      class="legend-color archived-color"
+                    >
+                    </span>
 
               <div>
 
@@ -524,9 +666,12 @@
                 </strong>
 
                 <span>
-                      {{ dashboard.alunosArquivados }}
-                      ({{ percentualArquivados() | number:'1.1-1' }}%)
-                    </span>
+                        {{ dashboard.alunosArquivados }}
+                        ({{
+                          percentualArquivados()
+                            | number:'1.1-1'
+                        }}%)
+                      </span>
 
               </div>
 
@@ -545,22 +690,30 @@
         <div class="panel-header panel-header-link">
 
           <h2>
-            <span class="panel-icon">◷</span>
+
+                  <span class="panel-icon">
+                    ◷
+                  </span>
+
             Atividades Recentes
+
           </h2>
 
-          <a href="#">
+          <a routerLink="/historico">
             Ver todas
           </a>
 
         </div>
 
-        @if (dashboard.atividadesRecentes.length > 0) {
+        @if (
+        (dashboard.atividadesRecentes?.length ?? 0) > 0
+        ) {
 
         <div class="activity-list">
 
           @for (
-          atividade of dashboard.atividadesRecentes;
+          atividade of
+          (dashboard.atividadesRecentes ?? []);
           track atividade.id
           ) {
 
@@ -573,12 +726,16 @@
             <div class="activity-info">
 
               <strong>
-                {{ nomeEvento(atividade.tipoEvento) }}
+                {{
+                nomeEvento(
+                atividade.tipoEvento
+                )
+                }}
               </strong>
 
               <span>
-                        {{ atividade.descricao }}
-                      </span>
+                          {{ atividade.descricao }}
+                        </span>
 
             </div>
 
@@ -608,9 +765,13 @@
     </section>
 
 
-    <!-- PARTE INFERIOR -->
+    <!-- ================================= -->
+    <!-- PARTE INFERIOR                   -->
+    <!-- ================================= -->
+
     <section class="bottom-grid">
 
+      <!-- ALTERAÇÕES RESTRITAS -->
       <article class="panel">
 
         <div class="panel-header panel-header-link">
@@ -619,60 +780,205 @@
             🔒 Alterações Restritas Pendentes
           </h2>
 
-          <a href="#">
+          <a href="javascript:void(0)">
             Ver todas
           </a>
 
         </div>
 
-        <div class="empty-state">
+        @if (
+        (
+        dashboard
+        .alteracoesRestritasPendentes
+        ?.length ?? 0
+        ) > 0
+        ) {
 
-          @if (dashboard.alteracoesPendentes === 0) {
+        <div class="table-wrapper">
 
-          Nenhuma alteração restrita pendente.
+          <table>
 
-          } @else {
+            <thead>
 
-          Existem
-          {{ dashboard.alteracoesPendentes }}
-          alterações aguardando análise.
+            <tr>
 
-          }
+              <th>
+                Aluno
+              </th>
+
+              <th>
+                Campo
+              </th>
+
+              <th>
+                Solicitante
+              </th>
+
+              <th>
+                Status
+              </th>
+
+              <th>
+                Data
+              </th>
+
+            </tr>
+
+            </thead>
+
+            <tbody>
+
+            @for (
+            alteracao of
+            (
+            dashboard
+            .alteracoesRestritasPendentes
+            ?? []
+            );
+            track alteracao.id
+            ) {
+
+            <tr>
+
+              <td>
+                {{ alteracao.aluno }}
+              </td>
+
+              <td>
+                {{ alteracao.campo }}
+              </td>
+
+              <td>
+                {{ alteracao.solicitante }}
+              </td>
+
+              <td>
+
+                            <span class="status-badge">
+                              {{ alteracao.status }}
+                            </span>
+
+              </td>
+
+              <td>
+                {{
+                alteracao.criadoEm
+                | date:'dd/MM/yyyy HH:mm'
+                }}
+              </td>
+
+            </tr>
+
+            }
+
+            </tbody>
+
+          </table>
 
         </div>
+
+        } @else {
+
+        <div class="empty-state">
+          Nenhuma alteração restrita pendente.
+        </div>
+
+        }
 
       </article>
 
 
+      <!-- NOTIFICAÇÕES RECENTES -->
       <article class="panel">
 
         <div class="panel-header panel-header-link">
 
           <h2>
-            🔔 Notificações
+            🔔 Notificações Recentes
           </h2>
 
-          <a href="#">
+          <a href="javascript:void(0)">
             Ver todas
           </a>
 
         </div>
 
-        <div class="empty-state">
+        @if (
+        (
+        dashboard
+        .notificacoesRecentes
+        ?.length ?? 0
+        ) > 0
+        ) {
 
-          O Dashboard registrou
+        <div class="notification-list">
 
-          <strong>
-            {{ dashboard.notificacoes }}
-          </strong>
+          @for (
+          notificacao of
+          (
+          dashboard
+          .notificacoesRecentes
+          ?? []
+          );
+          track notificacao.id
+          ) {
 
-          notificações.
+          <div class="notification-item">
+
+            <div
+              class="notification-icon"
+              [class.red]="!notificacao.lida"
+              [class.green]="notificacao.lida"
+            >
+              🔔
+            </div>
+
+            <div>
+
+              <strong>
+                {{ notificacao.titulo }}
+              </strong>
+
+              <span>
+                          {{ notificacao.mensagem }}
+                        </span>
+
+            </div>
+
+            <time>
+              {{
+              notificacao.dataHora
+              | date:'dd/MM/yyyy HH:mm'
+              }}
+            </time>
+
+          </div>
+
+          }
 
         </div>
+
+        } @else {
+
+        <div class="empty-state">
+          Nenhuma notificação recente encontrada.
+        </div>
+
+        }
 
       </article>
 
     </section>
+
+    }
+
+    } @else {
+
+    <!-- ================================= -->
+    <!-- PÁGINAS DO ANGULAR ROUTER         -->
+    <!-- ================================= -->
+
+    <router-outlet></router-outlet>
 
     }
 

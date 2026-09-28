@@ -1,0 +1,281 @@
+<section class="historico-page">
+
+  <div class="page-heading">
+
+    <div>
+
+      <h2>
+        Histórico
+      </h2>
+
+      <p>
+        Consulte os registros de operações realizadas no MOD – Gestão Musical.
+      </p>
+
+    </div>
+
+    <div class="total-box">
+
+      <span>
+        Registros
+      </span>
+
+      <strong>
+        {{ historicosFiltrados.length }}
+      </strong>
+
+    </div>
+
+  </div>
+
+
+  <div class="historico-panel">
+
+    <div class="toolbar">
+
+      <div class="search-field">
+
+        <span>
+          ⌕
+        </span>
+
+        <input
+          type="text"
+          [(ngModel)]="filtro"
+          (input)="filtrar()"
+          placeholder="Buscar por aluno, usuário, evento ou descrição..."
+        >
+
+      </div>
+
+      @if (filtro) {
+
+      <button
+        class="clear-button"
+        type="button"
+        (click)="limparFiltro()"
+      >
+        Limpar
+      </button>
+
+      }
+
+    </div>
+
+
+    @if (carregando) {
+
+    <div class="state-message">
+
+      <strong>
+        Carregando histórico...
+      </strong>
+
+    </div>
+
+    } @else if (erro) {
+
+    <div class="state-message error">
+
+      <strong>
+        {{ erro }}
+      </strong>
+
+    </div>
+
+    } @else if (
+    historicosFiltrados.length === 0
+    ) {
+
+    <div class="state-message">
+
+      <strong>
+        Nenhum registro de histórico encontrado.
+      </strong>
+
+    </div>
+
+    } @else {
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+
+        <tr>
+
+          <th>
+            Data
+          </th>
+
+          <th>
+            Aluno
+          </th>
+
+          <th>
+            Evento
+          </th>
+
+          <th>
+            Usuário
+          </th>
+
+          <th>
+            Descrição
+          </th>
+
+          <th>
+            Valor anterior
+          </th>
+
+          <th>
+            Valor novo
+          </th>
+
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        @for (
+        historico of historicosFiltrados;
+        track historico.id
+        ) {
+
+        <tr>
+
+          <td class="date-cell">
+
+            {{
+            historico.dataHora
+            | date:'dd/MM/yyyy HH:mm'
+            }}
+
+          </td>
+
+          <td>
+
+            <strong>
+              {{
+              historico.alunoNome
+              || 'Não informado'
+              }}
+            </strong>
+
+          </td>
+
+          <td>
+
+                  <span class="event-badge">
+
+                    {{
+                      nomeEvento(
+                        historico.tipoEvento
+                      )
+                    }}
+
+                  </span>
+
+          </td>
+
+          <td>
+
+            {{
+            historico.usuarioNome
+            || 'Sistema'
+            }}
+
+          </td>
+
+          <td class="description-cell">
+
+            {{
+            historico.descricao
+            || '-'
+            }}
+
+          </td>
+
+          <td class="value-cell">
+
+            @let anterior =
+            situacaoAnterior(
+            historico
+            );
+
+            @if (
+            anterior !== '-'
+            ) {
+
+            <span
+              class="situation-badge"
+              [class]="
+                        'situation-badge ' +
+                        classeSituacao(
+                          anterior
+                        )
+                      "
+            >
+                      {{ anterior }}
+                    </span>
+
+            } @else {
+
+            <span class="no-value">
+                      -
+                    </span>
+
+            }
+
+          </td>
+
+          <td class="value-cell">
+
+            @let nova =
+            situacaoNova(
+            historico
+            );
+
+            @if (
+            nova !== '-'
+            ) {
+
+            <span
+              class="situation-badge"
+              [class]="
+                        'situation-badge ' +
+                        classeSituacao(
+                          nova
+                        )
+                      "
+            >
+                      {{ nova }}
+                    </span>
+
+            } @else {
+
+            <span class="no-value">
+                      -
+                    </span>
+
+            }
+
+          </td>
+
+        </tr>
+
+        }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    }
+
+  </div>
+
+</section>
