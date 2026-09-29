@@ -1,0 +1,411 @@
+<section class="auditoria-page">
+
+<div class="page-header">
+
+  <div>
+
+    <h2>
+      Auditoria
+  </h2>
+
+  <p>
+  Registro das operações realizadas no MOD.
+</p>
+
+</div>
+
+<button
+type="button"
+class="refresh-button"
+(click)="carregarAuditorias()"
+  [disabled]="carregando"
+  >
+      ↻ Atualizar
+</button>
+
+</div>
+
+
+@if (erro) {
+
+  <div class="alert error">
+    {{ erro }}
+  </div>
+
+}
+
+
+<section class="summary-section">
+
+<article class="summary-box">
+
+  <span>
+    Registros
+  </span>
+
+  <strong>
+  {{ registros.length }}
+</strong>
+
+<small>
+Eventos auditados
+</small>
+
+</article>
+
+</section>
+
+
+<section class="content-card">
+
+<div class="filters">
+
+<div class="search-field">
+
+  <span>
+          ⌕
+        </span>
+
+        <input
+type="text"
+  [(ngModel)]="termoBusca"
+placeholder="Buscar usuário, ação, tabela ou descrição..."
+  >
+
+  </div>
+
+  </div>
+
+
+@if (carregando) {
+
+  <div class="state-message">
+    Carregando registros de auditoria...
+  </div>
+
+} @else if (
+  registrosFiltrados.length === 0
+) {
+
+  <div class="state-message">
+
+    @if (termoBusca) {
+    Nenhum registro encontrado para a busca informada.
+  } @else {
+    Nenhum registro de auditoria encontrado.
+  }
+
+  </div>
+
+} @else {
+
+  <div class="table-container">
+
+    <table>
+
+      <thead>
+
+        <tr>
+          <th>Data</th>
+    <th>Usuário</th>
+    <th>Ação</th>
+    <th>Tabela</th>
+    <th>Registro</th>
+    <th>Descrição</th>
+    <th>Detalhes</th>
+    </tr>
+
+    </thead>
+
+    <tbody>
+
+    @for (
+    registro of registrosFiltrados;
+  track registro.id
+) {
+
+    <tr>
+
+      <td class="date-cell">
+      {{
+      registro.criadoEm
+      | date:'dd/MM/yyyy HH:mm:ss'
+    }}
+    </td>
+
+
+    <td>
+
+    <div class="user-cell">
+
+      <strong>
+        {{
+      registro.usuarioNome
+      || 'Sistema'
+    }}
+    </strong>
+
+  @if (registro.usuarioId) {
+
+      <span>
+        ID {{ registro.usuarioId }}
+      </span>
+
+    }
+
+    </div>
+
+    </td>
+
+
+    <td>
+
+    <span class="action-badge">
+      {{ nomeAcao(registro.acao) }}
+    </span>
+
+    </td>
+
+
+    <td>
+    {{
+      nomeTabela(
+        registro.tabelaAfetada
+      )
+    }}
+    </td>
+
+
+    <td>
+    {{
+      registro.registroId
+      ?? '-'
+    }}
+    </td>
+
+
+    <td class="description-cell">
+      {{ registro.descricao }}
+    </td>
+
+
+    <td>
+
+    <button
+      type="button"
+    class="details-button"
+    (click)="abrirDetalhes(registro)"
+      >
+      Visualizar
+      </button>
+
+      </td>
+
+      </tr>
+
+  }
+
+  </tbody>
+
+  </table>
+
+  </div>
+
+}
+
+</section>
+
+</section>
+
+
+@if (auditoriaSelecionada) {
+
+  <div
+    class="modal-overlay"
+  (click)="fecharDetalhes()"
+  >
+
+  <section
+    class="details-modal"
+  (click)="$event.stopPropagation()"
+  >
+
+  <div class="modal-header">
+
+    <div>
+
+      <h3>
+        Detalhes da Auditoria
+  </h3>
+
+  <p>
+  Registro #{{ auditoriaSelecionada.id }}
+  </p>
+
+  </div>
+
+  <button
+  type="button"
+  class="close-button"
+  (click)="fecharDetalhes()"
+    >
+          ×
+        </button>
+
+        </div>
+
+
+        <div class="modal-content">
+
+  <div class="detail-grid">
+
+  <div class="detail-item">
+
+    <span>
+      Data
+    </span>
+
+    <strong>
+    {{
+    auditoriaSelecionada.criadoEm
+    | date:'dd/MM/yyyy HH:mm:ss'
+  }}
+  </strong>
+
+  </div>
+
+
+  <div class="detail-item">
+
+    <span>
+      Usuário
+    </span>
+
+    <strong>
+    {{
+    auditoriaSelecionada.usuarioNome
+    || 'Sistema'
+  }}
+  </strong>
+
+  </div>
+
+
+  <div class="detail-item">
+
+    <span>
+      Ação
+    </span>
+
+    <strong>
+    {{
+    nomeAcao(
+      auditoriaSelecionada.acao
+    )
+  }}
+  </strong>
+
+  </div>
+
+
+  <div class="detail-item">
+
+    <span>
+      Tabela
+    </span>
+
+    <strong>
+    {{
+    nomeTabela(
+      auditoriaSelecionada.tabelaAfetada
+    )
+  }}
+  </strong>
+
+  </div>
+
+
+  <div class="detail-item">
+
+    <span>
+      Registro
+    </span>
+
+    <strong>
+    {{
+    auditoriaSelecionada.registroId
+    ?? '-'
+  }}
+  </strong>
+
+  </div>
+
+  </div>
+
+
+  <div class="description-box">
+
+    <span>
+      Descrição
+    </span>
+
+    <p>
+    {{ auditoriaSelecionada.descricao }}
+  </p>
+
+  </div>
+
+
+  <div class="comparison-grid">
+
+  <section class="data-box">
+
+    <h4>
+      Dados anteriores
+  </h4>
+
+  <pre>{{
+    formatarDados(
+      auditoriaSelecionada.dadosAnteriores
+    )
+  }}</pre>
+
+  </section>
+
+
+  <section class="data-box">
+
+    <h4>
+      Dados novos
+  </h4>
+
+  <pre>{{
+    formatarDados(
+      auditoriaSelecionada.dadosNovos
+    )
+  }}</pre>
+
+  </section>
+
+  </div>
+
+  </div>
+
+
+  <div class="modal-actions">
+
+  <button
+    type="button"
+  class="close-modal-button"
+  (click)="fecharDetalhes()"
+    >
+    Fechar
+    </button>
+
+    </div>
+
+    </section>
+
+    </div>
+
+}

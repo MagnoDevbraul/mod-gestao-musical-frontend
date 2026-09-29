@@ -1,0 +1,232 @@
+<section class="notificacoes-page">
+
+  <div class="page-header">
+
+    <div>
+
+      <h2>
+        Notificações
+      </h2>
+
+      <p>
+        Acompanhamento dos eventos e alertas gerados pelo MOD.
+      </p>
+
+    </div>
+
+    <button
+      type="button"
+      class="refresh-button"
+      (click)="carregarNotificacoes()"
+      [disabled]="carregando"
+    >
+      ↻ Atualizar
+    </button>
+
+  </div>
+
+
+  @if (erro) {
+
+  <div class="alert error">
+    {{ erro }}
+  </div>
+
+  }
+
+
+  <section class="summary-grid">
+
+    <article class="summary-box">
+
+      <span>
+        Total
+      </span>
+
+      <strong>
+        {{ notificacoes.length }}
+      </strong>
+
+      <small>
+        Notificações registradas
+      </small>
+
+    </article>
+
+
+    <article class="summary-box unread">
+
+      <span>
+        Não lidas
+      </span>
+
+      <strong>
+        {{ totalNaoLidas }}
+      </strong>
+
+      <small>
+        Aguardando leitura
+      </small>
+
+    </article>
+
+  </section>
+
+
+  <section class="content-card">
+
+    <div class="filters">
+
+      <div class="search-field">
+
+        <span>
+          ⌕
+        </span>
+
+        <input
+          type="text"
+          [(ngModel)]="termoBusca"
+          placeholder="Buscar título, evento, aluno ou mensagem..."
+        >
+
+      </div>
+
+    </div>
+
+
+    @if (carregando) {
+
+    <div class="state-message">
+      Carregando notificações...
+    </div>
+
+    } @else if (
+    notificacoesFiltradas.length === 0
+    ) {
+
+    <div class="state-message">
+
+      @if (termoBusca) {
+      Nenhuma notificação encontrada para a busca informada.
+      } @else {
+      Nenhuma notificação encontrada.
+      }
+
+    </div>
+
+    } @else {
+
+    <div class="notification-list">
+
+      @for (
+      notificacao of notificacoesFiltradas;
+      track notificacao.id
+      ) {
+
+      <article
+        class="notification-card"
+        [class.unread]="!notificacao.lida"
+      >
+
+        <div class="notification-icon">
+          🔔
+        </div>
+
+
+        <div class="notification-content">
+
+          <div class="notification-header">
+
+            <div>
+
+              <strong>
+                {{ notificacao.titulo }}
+              </strong>
+
+              <span class="event-name">
+                    {{
+                      nomeEvento(
+                        notificacao.tipoEvento
+                      )
+                    }}
+                  </span>
+
+            </div>
+
+            <time>
+              {{
+              notificacao.dataHora
+              | date:'dd/MM/yyyy HH:mm'
+              }}
+            </time>
+
+          </div>
+
+
+          <p>
+            {{ notificacao.mensagem }}
+          </p>
+
+
+          <div class="notification-meta">
+
+            @if (notificacao.alunoNome) {
+
+            <span>
+                    Aluno:
+                    <strong>
+                      {{ notificacao.alunoNome }}
+                    </strong>
+                  </span>
+
+            }
+
+            @if (notificacao.usuarioNome) {
+
+            <span>
+                    Usuário:
+                    <strong>
+                      {{ notificacao.usuarioNome }}
+                    </strong>
+                  </span>
+
+            }
+
+          </div>
+
+        </div>
+
+
+        <div class="notification-actions">
+
+          @if (!notificacao.lida) {
+
+          <button
+            type="button"
+            class="read-button"
+            (click)="marcarComoLida(notificacao)"
+          >
+            Marcar como lida
+          </button>
+
+          } @else {
+
+          <span class="read-badge">
+                  Lida
+                </span>
+
+          }
+
+        </div>
+
+      </article>
+
+      }
+
+    </div>
+
+    }
+
+  </section>
+
+</section>

@@ -140,23 +140,27 @@
         <span>Histórico</span>
       </a>
 
-      <!-- AINDA NÃO IMPLEMENTADOS -->
+      <!-- AUDITORIA -->
       <a
         class="menu-item"
-        href="javascript:void(0)"
+        routerLink="/auditoria"
+        routerLinkActive="active"
       >
         <span class="menu-icon">▣</span>
         <span>Auditoria</span>
       </a>
 
+      <!-- NOTIFICAÇÕES -->
       <a
         class="menu-item"
-        href="javascript:void(0)"
+        routerLink="/notificacoes"
+        routerLinkActive="active"
       >
         <span class="menu-icon">●</span>
         <span>Notificações</span>
       </a>
 
+      <!-- COMPARTILHAMENTOS -->
       <a
         class="menu-item"
         href="javascript:void(0)"
@@ -165,6 +169,7 @@
         <span>Compartilhamentos</span>
       </a>
 
+      <!-- EXCLUSÕES -->
       <a
         class="menu-item"
         href="javascript:void(0)"
@@ -173,14 +178,17 @@
         <span>Exclusões</span>
       </a>
 
+      <!-- ALTERAÇÕES RESTRITAS -->
       <a
         class="menu-item"
-        href="javascript:void(0)"
+        routerLink="/alteracoes-restritas"
+        routerLinkActive="active"
       >
         <span class="menu-icon">▣</span>
         <span>Alterações Restritas</span>
       </a>
 
+      <!-- COMUNS -->
       <a
         class="menu-item"
         href="javascript:void(0)"
@@ -189,6 +197,7 @@
         <span>Comuns</span>
       </a>
 
+      <!-- NÍVEIS -->
       <a
         class="menu-item"
         href="javascript:void(0)"
@@ -197,6 +206,7 @@
         <span>Níveis</span>
       </a>
 
+      <!-- CARGOS / MINISTÉRIO -->
       <a
         class="menu-item"
         href="javascript:void(0)"
@@ -205,6 +215,7 @@
         <span>Cargos/Ministério</span>
       </a>
 
+      <!-- RELATÓRIOS -->
       <a
         class="menu-item"
         href="javascript:void(0)"
@@ -213,6 +224,7 @@
         <span>Relatórios</span>
       </a>
 
+      <!-- USUÁRIOS E PERMISSÕES -->
       <a
         class="menu-item"
         href="javascript:void(0)"
@@ -258,9 +270,9 @@
 
         <div class="search-box">
 
-            <span>
-              ⌕
-            </span>
+          <span>
+            ⌕
+          </span>
 
           <input
             type="text"
@@ -279,8 +291,8 @@
           ) {
 
           <span class="notification-badge">
-                {{ dashboard.notificacoes }}
-              </span>
+            {{ dashboard.notificacoes }}
+          </span>
 
           }
 
@@ -299,8 +311,8 @@
             </strong>
 
             <span>
-                Administrador
-              </span>
+              Administrador
+            </span>
 
           </div>
 
@@ -380,9 +392,9 @@
 
         <div class="summary-content">
 
-                <span class="summary-title">
-                  Total de Alunos
-                </span>
+          <span class="summary-title">
+            Total de Alunos
+          </span>
 
           <strong>
             {{ dashboard.totalAlunos }}
@@ -406,9 +418,9 @@
 
         <div class="summary-content">
 
-                <span class="summary-title">
-                  Alunos Ativos
-                </span>
+          <span class="summary-title">
+            Alunos Ativos
+          </span>
 
           <strong>
             {{ dashboard.alunosAtivos }}
@@ -435,9 +447,9 @@
 
         <div class="summary-content">
 
-                <span class="summary-title">
-                  Arquivados
-                </span>
+          <span class="summary-title">
+            Arquivados
+          </span>
 
           <strong>
             {{ dashboard.alunosArquivados }}
@@ -464,9 +476,9 @@
 
         <div class="summary-content">
 
-                <span class="summary-title">
-                  Alterações Pendentes
-                </span>
+          <span class="summary-title">
+            Alterações Pendentes
+          </span>
 
           <strong>
             {{ dashboard.alteracoesPendentes }}
@@ -490,9 +502,9 @@
 
         <div class="summary-content">
 
-                <span class="summary-title">
-                  Notificações
-                </span>
+          <span class="summary-title">
+            Notificações
+          </span>
 
           <strong>
             {{ dashboard.notificacoes }}
@@ -510,7 +522,7 @@
 
 
     <!-- ================================= -->
-    <!-- ÁREA CENTRAL                     -->
+    <!-- ÁREA CENTRAL                      -->
     <!-- ================================= -->
 
     <section class="dashboard-grid">
@@ -522,9 +534,9 @@
 
           <h2>
 
-                  <span class="panel-icon">
-                    ▥
-                  </span>
+            <span class="panel-icon">
+              ▥
+            </span>
 
             Alunos por Comum
 
@@ -539,16 +551,15 @@
         <div class="bar-chart">
 
           @for (
-          item of
-          (dashboard.alunosPorComum ?? []);
+          item of (dashboard.alunosPorComum ?? []);
           track item.comum
           ) {
 
           <div class="bar-item">
 
-                      <span class="bar-number">
-                        {{ item.quantidade }}
-                      </span>
+            <span class="bar-number">
+              {{ item.quantidade }}
+            </span>
 
             <div
               class="bar"
@@ -557,8 +568,8 @@
             </div>
 
             <span>
-                        {{ item.comum }}
-                      </span>
+              {{ item.comum }}
+            </span>
 
           </div>
 
@@ -584,9 +595,9 @@
 
           <h2>
 
-                  <span class="panel-icon">
-                    ◔
-                  </span>
+            <span class="panel-icon">
+              ◔
+            </span>
 
             Situação dos Alunos
 
@@ -599,14 +610,14 @@
           <div
             class="donut-chart"
             [style.background]="
-                    'conic-gradient(' +
-                    '#3f8bd8 0% ' +
-                    percentualAtivos() +
-                    '%, ' +
-                    '#45bd7e ' +
-                    percentualAtivos() +
-                    '% 100%)'
-                  "
+              'conic-gradient(' +
+              '#3f8bd8 0% ' +
+              percentualAtivos() +
+              '%, ' +
+              '#45bd7e ' +
+              percentualAtivos() +
+              '% 100%)'
+            "
           >
 
             <div class="donut-center">
@@ -616,8 +627,8 @@
               </strong>
 
               <span>
-                      alunos
-                    </span>
+                alunos
+              </span>
 
             </div>
 
@@ -628,10 +639,10 @@
 
             <div class="legend-item">
 
-                    <span
-                      class="legend-color active-color"
-                    >
-                    </span>
+              <span
+                class="legend-color active-color"
+              >
+              </span>
 
               <div>
 
@@ -640,12 +651,12 @@
                 </strong>
 
                 <span>
-                        {{ dashboard.alunosAtivos }}
-                        ({{
-                          percentualAtivos()
-                            | number:'1.1-1'
-                        }}%)
-                      </span>
+                  {{ dashboard.alunosAtivos }}
+                  ({{
+                    percentualAtivos()
+                    | number:'1.1-1'
+                  }}%)
+                </span>
 
               </div>
 
@@ -654,10 +665,10 @@
 
             <div class="legend-item">
 
-                    <span
-                      class="legend-color archived-color"
-                    >
-                    </span>
+              <span
+                class="legend-color archived-color"
+              >
+              </span>
 
               <div>
 
@@ -666,12 +677,12 @@
                 </strong>
 
                 <span>
-                        {{ dashboard.alunosArquivados }}
-                        ({{
-                          percentualArquivados()
-                            | number:'1.1-1'
-                        }}%)
-                      </span>
+                  {{ dashboard.alunosArquivados }}
+                  ({{
+                    percentualArquivados()
+                    | number:'1.1-1'
+                  }}%)
+                </span>
 
               </div>
 
@@ -691,9 +702,9 @@
 
           <h2>
 
-                  <span class="panel-icon">
-                    ◷
-                  </span>
+            <span class="panel-icon">
+              ◷
+            </span>
 
             Atividades Recentes
 
@@ -712,8 +723,7 @@
         <div class="activity-list">
 
           @for (
-          atividade of
-          (dashboard.atividadesRecentes ?? []);
+          atividade of (dashboard.atividadesRecentes ?? []);
           track atividade.id
           ) {
 
@@ -734,8 +744,8 @@
               </strong>
 
               <span>
-                          {{ atividade.descricao }}
-                        </span>
+                {{ atividade.descricao }}
+              </span>
 
             </div>
 
@@ -766,7 +776,7 @@
 
 
     <!-- ================================= -->
-    <!-- PARTE INFERIOR                   -->
+    <!-- PARTE INFERIOR                    -->
     <!-- ================================= -->
 
     <section class="bottom-grid">
@@ -780,7 +790,7 @@
             🔒 Alterações Restritas Pendentes
           </h2>
 
-          <a href="javascript:void(0)">
+          <a routerLink="/alteracoes-restritas">
             Ver todas
           </a>
 
@@ -829,8 +839,7 @@
             <tbody>
 
             @for (
-            alteracao of
-            (
+            alteracao of (
             dashboard
             .alteracoesRestritasPendentes
             ?? []
@@ -854,9 +863,9 @@
 
               <td>
 
-                            <span class="status-badge">
-                              {{ alteracao.status }}
-                            </span>
+                  <span class="status-badge">
+                    {{ alteracao.status }}
+                  </span>
 
               </td>
 
@@ -897,7 +906,7 @@
             🔔 Notificações Recentes
           </h2>
 
-          <a href="javascript:void(0)">
+          <a routerLink="/notificacoes">
             Ver todas
           </a>
 
@@ -914,8 +923,7 @@
         <div class="notification-list">
 
           @for (
-          notificacao of
-          (
+          notificacao of (
           dashboard
           .notificacoesRecentes
           ?? []
@@ -940,8 +948,8 @@
               </strong>
 
               <span>
-                          {{ notificacao.mensagem }}
-                        </span>
+                {{ notificacao.mensagem }}
+              </span>
 
             </div>
 

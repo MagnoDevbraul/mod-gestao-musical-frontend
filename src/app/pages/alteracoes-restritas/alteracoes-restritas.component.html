@@ -1,0 +1,368 @@
+<section class="alteracoes-page">
+
+  <div class="page-header">
+
+    <div>
+      <h2>Alterações Restritas</h2>
+
+      <p>
+        Solicitações que aguardam análise e decisão.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="refresh-button"
+      (click)="carregarPendentes()"
+      [disabled]="carregando"
+    >
+      ↻ Atualizar
+    </button>
+
+  </div>
+
+
+  @if (mensagemSucesso) {
+
+  <div class="alert success">
+    {{ mensagemSucesso }}
+  </div>
+
+  }
+
+
+  @if (erro) {
+
+  <div class="alert error">
+    {{ erro }}
+  </div>
+
+  }
+
+
+  <section class="summary-section">
+
+    <article class="summary-box">
+
+      <span>
+        Pendentes
+      </span>
+
+      <strong>
+        {{ solicitacoes.length }}
+      </strong>
+
+      <small>
+        Aguardando análise
+      </small>
+
+    </article>
+
+  </section>
+
+
+  <section class="content-card">
+
+    <div class="filters">
+
+      <div class="search-field">
+
+        <span>⌕</span>
+
+        <input
+          type="text"
+          [(ngModel)]="termoBusca"
+          placeholder="Buscar aluno, solicitante, campo ou motivo..."
+        >
+
+      </div>
+
+    </div>
+
+
+    @if (carregando) {
+
+    <div class="state-message">
+      Carregando alterações restritas...
+    </div>
+
+    } @else if (solicitacoesFiltradas.length === 0) {
+
+    <div class="state-message">
+
+      @if (termoBusca) {
+      Nenhuma alteração encontrada para a busca informada.
+      } @else {
+      Nenhuma alteração restrita pendente.
+      }
+
+    </div>
+
+    } @else {
+
+    <div class="table-container">
+
+      <table>
+
+        <thead>
+
+        <tr>
+          <th>Aluno</th>
+          <th>Alteração solicitada</th>
+          <th>Solicitante</th>
+          <th>Motivo</th>
+          <th>Data</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        @for (
+        solicitacao of solicitacoesFiltradas;
+        track solicitacao.id
+        ) {
+
+        <tr>
+
+          <td>
+
+            <div class="student-cell">
+
+              <strong>
+                {{ solicitacao.alunoNome }}
+              </strong>
+
+              <span>
+                      ID {{ solicitacao.alunoId }}
+                    </span>
+
+            </div>
+
+          </td>
+
+
+          <td class="changes-cell">
+            {{ camposSolicitados(solicitacao) }}
+          </td>
+
+
+          <td>
+            {{ solicitacao.solicitanteNome }}
+          </td>
+
+
+          <td class="reason-cell">
+            {{ solicitacao.motivo || '-' }}
+          </td>
+
+
+          <td>
+            {{
+            solicitacao.criadoEm
+            | date:'dd/MM/yyyy HH:mm'
+            }}
+          </td>
+
+
+          <td>
+
+                  <span class="status-badge pending">
+                    {{ solicitacao.status }}
+                  </span>
+
+          </td>
+
+
+          <td>
+
+            <div class="actions">
+
+              <button
+                type="button"
+                class="action-button approve"
+                (click)="abrirAprovacao(solicitacao)"
+              >
+                Aprovar
+              </button>
+
+              <button
+                type="button"
+                class="action-button reject"
+                (click)="abrirRejeicao(solicitacao)"
+              >
+                Rejeitar
+              </button>
+
+            </div>
+
+          </td>
+
+        </tr>
+
+        }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    }
+
+  </section>
+
+</section>
+
+
+@if (solicitacaoSelecionada && tipoDecisao) {
+
+<div
+  class="modal-overlay"
+  (click)="fecharDecisao()"
+>
+
+  <section
+    class="decision-modal"
+    (click)="$event.stopPropagation()"
+  >
+
+    <div class="modal-header">
+
+      <div>
+
+        <h3>
+          {{ tituloModal() }}
+        </h3>
+
+        <p>
+          Solicitação #{{ solicitacaoSelecionada.id }}
+        </p>
+
+      </div>
+
+      <button
+        type="button"
+        class="close-button"
+        (click)="fecharDecisao()"
+        [disabled]="processando"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <div class="modal-content">
+
+      <div class="detail-row">
+
+        <span>Aluno</span>
+
+        <strong>
+          {{ solicitacaoSelecionada.alunoNome }}
+        </strong>
+
+      </div>
+
+
+      <div class="detail-row">
+
+        <span>Solicitante</span>
+
+        <strong>
+          {{ solicitacaoSelecionada.solicitanteNome }}
+        </strong>
+
+      </div>
+
+
+      <div class="detail-row vertical">
+
+          <span>
+            Alteração solicitada
+          </span>
+
+        <strong>
+          {{
+          camposSolicitados(
+          solicitacaoSelecionada
+          )
+          }}
+        </strong>
+
+      </div>
+
+
+      <div class="detail-row vertical">
+
+        <span>Motivo</span>
+
+        <strong>
+          {{
+          solicitacaoSelecionada.motivo
+          || '-'
+          }}
+        </strong>
+
+      </div>
+
+
+      <div class="form-field">
+
+        <label for="observacaoDecisao">
+
+          @if (tipoDecisao === 'REJEITAR') {
+          Motivo da rejeição *
+          } @else {
+          Observação da aprovação
+          }
+
+        </label>
+
+        <textarea
+          id="observacaoDecisao"
+          [(ngModel)]="observacaoDecisao"
+          rows="4"
+          [placeholder]="
+              tipoDecisao === 'REJEITAR'
+                ? 'Informe o motivo da rejeição'
+                : 'Observação opcional'
+            "
+        ></textarea>
+
+      </div>
+
+    </div>
+
+
+    <div class="modal-actions">
+
+      <button
+        type="button"
+        class="cancel-button"
+        (click)="fecharDecisao()"
+        [disabled]="processando"
+      >
+        Cancelar
+      </button>
+
+      <button
+        type="button"
+        class="confirm-button"
+        [class.reject]="tipoDecisao === 'REJEITAR'"
+        (click)="confirmarDecisao()"
+        [disabled]="processando"
+      >
+        {{ textoBotaoConfirmacao() }}
+      </button>
+
+    </div>
+
+  </section>
+
+</div>
+
+}
