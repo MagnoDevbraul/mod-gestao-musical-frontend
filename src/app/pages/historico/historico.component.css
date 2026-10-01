@@ -14,10 +14,7 @@
   width: 100%;
   min-width: 0;
 
-  padding:
-    6px
-    0
-    0;
+  padding: 0;
 }
 
 .page-heading {
@@ -26,9 +23,9 @@
   align-items: center;
   justify-content: space-between;
 
-  gap: 16px;
+  gap: 12px;
 
-  margin-bottom: 14px;
+  margin-bottom: 8px;
 }
 
 .page-heading h2 {
@@ -41,8 +38,7 @@
 }
 
 .page-heading p {
-  margin:
-    4px 0 0;
+  margin: 2px 0 0;
 
   color: #687386;
 
@@ -58,9 +54,7 @@
 
   flex: 0 0 auto;
 
-  padding:
-    8px
-    12px;
+  padding: 6px 11px;
 
   border:
     1px solid
@@ -122,11 +116,9 @@
 
   align-items: center;
 
-  gap: 10px;
+  gap: 8px;
 
-  padding:
-    13px
-    16px;
+  padding: 10px 12px;
 
   border-bottom:
     1px solid
@@ -172,7 +164,7 @@
   min-width: 0;
 
   padding:
-    9px 0;
+    8px 0;
 
   border: none;
 
@@ -216,15 +208,8 @@
 
   min-width: 0;
 
-  max-height:
-    calc(
-      100vh - 235px
-    );
+  max-height: calc(100vh - 195px);
 
-  /*
-   * Apenas rolagem vertical.
-   * A tabela passa a caber na largura disponível.
-   */
   overflow-y: auto;
   overflow-x: hidden;
 
@@ -263,9 +248,7 @@ thead th {
 
   z-index: 5;
 
-  padding:
-    9px
-    8px;
+  padding: 8px 7px;
 
   text-align: left;
 
@@ -336,9 +319,7 @@ tbody td:nth-child(7) {
    ====================================================== */
 
 td {
-  padding:
-    9px
-    8px;
+  padding: 8px 7px;
 
   vertical-align: top;
 

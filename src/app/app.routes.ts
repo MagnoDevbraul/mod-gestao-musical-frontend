@@ -32,6 +32,8 @@ import {
   UsuariosPermissoesComponent
 } from './pages/usuarios-permissoes/usuarios-permissoes.component';
 
+import { ExclusoesComponent } from './pages/exclusoes/exclusoes.component';
+
 export const routes: Routes = [
 
   {
@@ -72,6 +74,11 @@ export const routes: Routes = [
   {
     path: 'usuarios-permissoes',
     component: UsuariosPermissoesComponent
+  },
+
+  {
+    path: 'exclusoes',
+    component: ExclusoesComponent
   },
 
   {

@@ -1,29 +1,31 @@
 <section class="auditoria-page">
 
-<div class="page-header">
+  <div class="page-header">
 
-  <div>
+    <div class="page-title">
+      <h2>
+        Auditoria
+      </h2>
 
-    <h2>
-      Auditoria
-  </h2>
+      <p>
+        Registro das operações realizadas no MOD.
+      </p>
+    </div>
 
-  <p>
-  Registro das operações realizadas no MOD.
-</p>
+    <div class="page-header-actions">
 
-</div>
+      <button
+        type="button"
+        class="refresh-button"
+        (click)="carregarAuditorias()"
+        [disabled]="carregando"
+      >
+        ↻ Atualizar
+      </button>
 
-<button
-type="button"
-class="refresh-button"
-(click)="carregarAuditorias()"
-  [disabled]="carregando"
-  >
-      ↻ Atualizar
-</button>
+    </div>
 
-</div>
+  </div>
 
 
 @if (erro) {
@@ -33,28 +35,6 @@ class="refresh-button"
   </div>
 
 }
-
-
-<section class="summary-section">
-
-<article class="summary-box">
-
-  <span>
-    Registros
-  </span>
-
-  <strong>
-  {{ registros.length }}
-</strong>
-
-<small>
-Eventos auditados
-</small>
-
-</article>
-
-</section>
-
 
 <section class="content-card">
 

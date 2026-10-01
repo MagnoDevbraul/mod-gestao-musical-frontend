@@ -1,0 +1,483 @@
+<section class="exclusoes-page">
+
+  <div class="page-heading">
+
+    <div>
+      <h2>Exclusões</h2>
+
+      <p>
+        Arquivamento, restauração e histórico
+        de exclusões de alunos.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="refresh-button"
+      (click)="carregarDados()"
+      [disabled]="carregando || processando"
+    >
+      ↻ Atualizar
+    </button>
+
+  </div>
+
+
+  @if (erro) {
+
+  <div class="alert error">
+    {{ erro }}
+  </div>
+
+  }
+
+
+  @if (mensagem) {
+
+  <div class="alert success">
+    {{ mensagem }}
+  </div>
+
+  }
+
+
+  @if (carregando) {
+
+  <div class="state-message">
+    Carregando dados...
+  </div>
+
+  } @else {
+
+  <section class="summary-grid">
+
+    <article class="summary-card">
+      <span>Alunos ativos</span>
+      <strong>
+        {{ alunosAtivos.length }}
+      </strong>
+    </article>
+
+    <article class="summary-card warning">
+      <span>Arquivados</span>
+      <strong>
+        {{ alunosArquivados.length }}
+      </strong>
+    </article>
+
+    <article class="summary-card">
+      <span>Registros de exclusão</span>
+      <strong>
+        {{ exclusoes.length }}
+      </strong>
+    </article>
+
+  </section>
+
+
+  <section class="content-card">
+
+    <div class="section-header">
+
+      <div>
+        <h3>Alunos ativos</h3>
+
+        <p>
+          Selecione a origem da exclusão
+          ou arquivamento.
+        </p>
+      </div>
+
+      <input
+        type="text"
+        [(ngModel)]="filtroAtivos"
+        placeholder="Buscar aluno ou comum..."
+      >
+
+    </div>
+
+
+    @if (
+    alunosAtivosFiltrados.length === 0
+    ) {
+
+    <div class="state-message small">
+      Nenhum aluno ativo encontrado.
+    </div>
+
+    } @else {
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+        <tr>
+          <th>Aluno</th>
+          <th>Comum</th>
+          <th>Nível</th>
+          <th>Situação</th>
+          <th>Ações</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        @for (
+        aluno of alunosAtivosFiltrados;
+        track aluno.id
+        ) {
+
+        <tr>
+
+          <td>
+            <strong>
+              {{ aluno.nome }}
+            </strong>
+          </td>
+
+          <td>
+            {{ aluno.comumNome || '-' }}
+          </td>
+
+          <td>
+            {{ aluno.nivelNome || '-' }}
+          </td>
+
+          <td>
+            <span class="status active">
+              {{ aluno.situacao }}
+            </span>
+          </td>
+
+          <td class="actions-cell">
+
+            <button
+              type="button"
+              class="sam-button"
+              (click)="
+                abrirArquivamento(
+                  aluno,
+                  'SAM'
+                )
+              "
+            >
+              Excluir no SAM
+            </button>
+
+            <button
+              type="button"
+              class="archive-button"
+              (click)="
+                abrirArquivamento(
+                  aluno,
+                  'MOD'
+                )
+              "
+            >
+              Arquivar no MOD
+            </button>
+
+          </td>
+
+        </tr>
+
+        }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    }
+
+  </section>
+
+
+  <section class="content-card">
+
+    <div class="section-header">
+
+      <div>
+        <h3>Alunos arquivados</h3>
+
+        <p>
+          Registros preservados no MOD.
+        </p>
+      </div>
+
+      <input
+        type="text"
+        [(ngModel)]="filtroArquivados"
+        placeholder="Buscar aluno ou comum..."
+      >
+
+    </div>
+
+
+    @if (
+    alunosArquivadosFiltrados.length === 0
+    ) {
+
+    <div class="state-message small">
+      Nenhum aluno arquivado encontrado.
+    </div>
+
+    } @else {
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+        <tr>
+          <th>Aluno</th>
+          <th>Comum</th>
+          <th>Nível</th>
+          <th>Situação</th>
+          <th>Ação</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        @for (
+        aluno of alunosArquivadosFiltrados;
+        track aluno.id
+        ) {
+
+        <tr>
+
+          <td>
+            <strong>
+              {{ aluno.nome }}
+            </strong>
+          </td>
+
+          <td>
+            {{ aluno.comumNome || '-' }}
+          </td>
+
+          <td>
+            {{ aluno.nivelNome || '-' }}
+          </td>
+
+          <td>
+            <span class="status archived">
+              ARQUIVADO
+            </span>
+          </td>
+
+          <td>
+
+            <button
+              type="button"
+              class="restore-button"
+              [disabled]="processando"
+              (click)="restaurar(aluno)"
+            >
+              Restaurar
+            </button>
+
+          </td>
+
+        </tr>
+
+        }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    }
+
+  </section>
+
+
+  <section class="content-card">
+
+    <div class="section-header">
+
+      <div>
+        <h3>Histórico de exclusões</h3>
+
+        <p>
+          Operações registradas no MOD.
+        </p>
+      </div>
+
+      <input
+        type="text"
+        [(ngModel)]="filtroHistorico"
+        placeholder="Buscar aluno, usuário ou motivo..."
+      >
+
+    </div>
+
+
+    @if (
+    exclusoesFiltradas.length === 0
+    ) {
+
+    <div class="state-message small">
+      Nenhum registro encontrado.
+    </div>
+
+    } @else {
+
+    <div class="table-wrapper history">
+
+      <table>
+
+        <thead>
+        <tr>
+          <th>Data</th>
+          <th>Aluno</th>
+          <th>Usuário</th>
+          <th>Motivo</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        @for (
+        item of exclusoesFiltradas;
+        track item.id
+        ) {
+
+        <tr>
+
+          <td class="date-cell">
+            {{
+            item.dataHora
+            | date:'dd/MM/yyyy HH:mm'
+            }}
+          </td>
+
+          <td>
+            <strong>
+              {{ item.alunoNome }}
+            </strong>
+          </td>
+
+          <td>
+            {{
+            item.usuarioNome
+            || 'Sistema'
+            }}
+          </td>
+
+          <td>
+            {{ item.motivo }}
+          </td>
+
+        </tr>
+
+        }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    }
+
+  </section>
+
+  }
+
+</section>
+
+
+@if (alunoSelecionado) {
+
+<div
+  class="modal-overlay"
+  (click)="fecharModal()"
+>
+
+  <section
+    class="modal"
+    (click)="$event.stopPropagation()"
+  >
+
+    <div class="modal-header">
+
+      <div>
+
+        <h3>
+          {{
+          tipoOperacao === 'SAM'
+          ? 'Excluir no SAM'
+          : 'Arquivar no MOD'
+          }}
+        </h3>
+
+        <p>
+          {{ alunoSelecionado.nome }}
+        </p>
+
+      </div>
+
+      <button
+        type="button"
+        class="close-button"
+        (click)="fecharModal()"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <div class="modal-content">
+
+      <label for="motivo">
+        Motivo
+      </label>
+
+      <textarea
+        id="motivo"
+        [(ngModel)]="motivo"
+        rows="4"
+        placeholder="Informe o motivo da operação..."
+      ></textarea>
+
+    </div>
+
+
+    <div class="modal-actions">
+
+      <button
+        type="button"
+        class="secondary-button"
+        [disabled]="processando"
+        (click)="fecharModal()"
+      >
+        Cancelar
+      </button>
+
+      <button
+        type="button"
+        class="confirm-button"
+        [disabled]="processando"
+        (click)="confirmarArquivamento()"
+      >
+        {{
+        processando
+        ? 'Processando...'
+        : 'Confirmar'
+        }}
+      </button>
+
+    </div>
+
+  </section>
+
+</div>
+
+}

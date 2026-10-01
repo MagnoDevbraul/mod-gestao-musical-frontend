@@ -172,7 +172,8 @@
       <!-- EXCLUSÕES -->
       <a
         class="menu-item"
-        href="javascript:void(0)"
+        routerLink="/exclusoes"
+        routerLinkActive="active"
       >
         <span class="menu-icon">▥</span>
         <span>Exclusões</span>
@@ -187,7 +188,6 @@
         <span class="menu-icon">▣</span>
         <span>Alterações Restritas</span>
       </a>
-
 
       <!-- RELATÓRIOS -->
       <a
@@ -246,9 +246,9 @@
 
         <div class="search-box">
 
-  <span>
-    ⌕
-  </span>
+          <span>
+            ⌕
+          </span>
 
           <input
             type="text"
@@ -841,9 +841,9 @@
 
               <td>
 
-                  <span class="status-badge">
-                    {{ alteracao.status }}
-                  </span>
+                <span class="status-badge">
+                  {{ alteracao.status }}
+                </span>
 
               </td>
 
