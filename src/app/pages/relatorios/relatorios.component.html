@@ -1,0 +1,235 @@
+<section class="relatorios-page">
+
+<div class="page-header">
+
+  <div>
+    <h2>Relatórios</h2>
+
+  <p>
+  Consolidação mensal dos principais indicadores do MOD.
+</p>
+</div>
+
+</div>
+
+
+<section class="filter-card">
+
+<div class="field">
+
+  <label for="mes">
+  Mês
+  </label>
+
+  <select
+  id="mes"
+    [(ngModel)]="mes"
+    >
+    @for (item of meses; track item.valor) {
+
+  <option [value]="item.valor">
+    {{ item.nome }}
+  </option>
+
+}
+</select>
+
+</div>
+
+
+<div class="field">
+
+  <label for="ano">
+  Ano
+  </label>
+
+  <input
+  id="ano"
+type="number"
+min="2020"
+max="2100"
+  [(ngModel)]="ano"
+  >
+
+  </div>
+
+
+  <div class="actions">
+
+<button
+  type="button"
+class="secondary-button"
+(click)="buscar()"
+  [disabled]="carregando"
+  >
+  Consultar
+  </button>
+
+  <button
+type="button"
+class="primary-button"
+(click)="gerar()"
+  [disabled]="carregando"
+  >
+  Gerar / Atualizar
+  </button>
+
+  </div>
+
+  </section>
+
+
+@if (erro) {
+
+  <div class="alert error">
+    {{ erro }}
+  </div>
+
+}
+
+
+@if (mensagem) {
+
+  <div class="alert success">
+    {{ mensagem }}
+  </div>
+
+}
+
+
+@if (carregando) {
+
+  <div class="state-message">
+    Processando relatório...
+  </div>
+
+}
+
+
+@if (relatorio && !carregando) {
+
+  <section class="report-header">
+
+    <div>
+
+      <span>Período</span>
+
+    <strong>
+    {{ nomeMes() }} / {{ ano }}
+  </strong>
+
+  </div>
+
+  <div>
+
+  <span>Gerado em</span>
+
+  <strong>
+  {{
+    relatorio.geradoEm
+    | date:'dd/MM/yyyy HH:mm'
+  }}
+  </strong>
+
+  </div>
+
+  </section>
+
+
+  <section class="cards-grid">
+
+  <article class="metric-card">
+    <span>Alunos ativos</span>
+  <strong>{{ relatorio.totalAlunosAtivos }}</strong>
+  </article>
+
+  <article class="metric-card">
+    <span>Alunos arquivados</span>
+  <strong>{{ relatorio.totalAlunosArquivados }}</strong>
+  </article>
+
+  <article class="metric-card warning">
+    <span>Sem movimentação há 60 dias</span>
+  <strong>
+  {{ relatorio.totalAlunosSemMovimentacao60Dias }}
+  </strong>
+  </article>
+
+  <article class="metric-card">
+    <span>Compartilhamentos</span>
+    <strong>
+    {{ relatorio.totalCompartilhamentos }}
+  </strong>
+  </article>
+
+  <article class="metric-card">
+    <span>Arquivamentos</span>
+    <strong>
+    {{ relatorio.totalExclusoesArquivamentos }}
+  </strong>
+  </article>
+
+  <article class="metric-card">
+    <span>Restaurações</span>
+    <strong>
+    {{ relatorio.totalRestauracoes }}
+  </strong>
+  </article>
+
+  <article class="metric-card">
+    <span>Notificações</span>
+    <strong>
+    {{ relatorio.totalNotificacoes }}
+  </strong>
+  </article>
+
+  <article class="metric-card">
+    <span>Eventos de auditoria</span>
+  <strong>
+  {{ relatorio.totalEventosAuditoria }}
+  </strong>
+  </article>
+
+  </section>
+
+
+  <section class="musical-card">
+
+    <h3>
+      Atividades musicais
+  </h3>
+
+  <div class="musical-grid">
+
+    <div>
+      <span>MSA</span>
+    <strong>{{ relatorio.totalMsa }}</strong>
+  </div>
+
+  <div>
+  <span>MTS</span>
+  <strong>{{ relatorio.totalMts }}</strong>
+  </div>
+
+  <div>
+  <span>Método</span>
+  <strong>{{ relatorio.totalMetodo }}</strong>
+  </div>
+
+  <div>
+  <span>Hinário</span>
+  <strong>{{ relatorio.totalHinario }}</strong>
+  </div>
+
+  <div>
+  <span>Escalas</span>
+  <strong>{{ relatorio.totalEscala }}</strong>
+  </div>
+
+  </div>
+
+  </section>
+
+}
+
+</section>

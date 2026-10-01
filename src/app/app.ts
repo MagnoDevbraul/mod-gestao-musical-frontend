@@ -46,6 +46,7 @@ export class App implements OnInit {
   senha = '';
 
   mensagemLogin = '';
+  buscaGlobal = '';
 
   private erroLogin = '';
   private erroDashboard = '';
@@ -295,6 +296,25 @@ export class App implements OnInit {
         }
 
       });
+  }
+
+  buscarGlobal(): void {
+
+    const termo =
+      this.buscaGlobal.trim();
+
+    if (!termo) {
+      return;
+    }
+
+    this.router.navigate(
+      ['/alunos'],
+      {
+        queryParams: {
+          busca: termo
+        }
+      }
+    );
   }
 
   estaNoDashboard(): boolean {

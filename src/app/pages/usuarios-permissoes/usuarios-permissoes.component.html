@@ -1,0 +1,271 @@
+<section class="usuarios-page">
+
+<div class="page-header">
+
+  <div>
+    <h2>
+      Usuários e Permissões
+</h2>
+
+<p>
+Gestão de usuários, perfis e permissões de acesso ao MOD.
+</p>
+</div>
+
+</div>
+
+
+@if (erro) {
+  <div class="alert error">
+    {{ erro }}
+  </div>
+}
+
+
+@if (mensagem) {
+  <div class="alert success">
+    {{ mensagem }}
+  </div>
+}
+
+
+<section class="panel">
+
+<div class="panel-header">
+
+  <div>
+    <h3>Usuários</h3>
+  <span>
+  {{ usuarios.length }} cadastrados
+</span>
+</div>
+
+<div class="search-box">
+
+  <span>⌕</span>
+
+<input
+type="text"
+  [(ngModel)]="termoBusca"
+placeholder="Buscar usuário, perfil ou comum..."
+  >
+
+  </div>
+
+  </div>
+
+
+@if (carregando) {
+
+  <div class="state-message">
+    Carregando usuários...
+  </div>
+
+} @else {
+
+  <div class="table-wrapper">
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>Usuário</th>
+    <th>Comum</th>
+    <th>Perfil</th>
+    <th>Situação</th>
+    <th>Ação</th>
+    </tr>
+    </thead>
+
+    <tbody>
+
+    @for (
+    usuario of usuariosFiltrados;
+  track usuario.id
+) {
+
+    <tr>
+
+      <td>
+
+        <strong>
+          {{ usuario.nome }}
+    </strong>
+
+    <small>
+    {{ usuario.email }}
+    </small>
+
+    </td>
+
+    <td>
+    {{ usuario.comumNome || '-' }}
+    </td>
+
+    <td>
+
+    <select
+      [ngModel]="usuario.perfilUsuarioId"
+    (ngModelChange)="alterarPerfil(usuario, +$event)"
+      >
+
+      @for (
+      perfil of perfis;
+    track perfil.id
+  ) {
+
+      <option
+        [value]="perfil.id"
+        >
+        {{ perfil.nome }}
+      </option>
+
+    }
+
+    </select>
+
+    </td>
+
+    <td>
+
+    <span
+      class="status"
+      [class.active]="usuario.ativo"
+      [class.inactive]="!usuario.ativo"
+      >
+      {{
+      usuario.ativo
+        ? 'Ativo'
+        : 'Inativo'
+    }}
+    </span>
+
+    </td>
+
+    <td>
+
+    <button
+      type="button"
+    class="status-button"
+    (click)="alterarAtivo(usuario)"
+      >
+      {{
+      usuario.ativo
+        ? 'Desativar'
+        : 'Ativar'
+    }}
+    </button>
+
+    </td>
+
+    </tr>
+
+  }
+
+  </tbody>
+
+  </table>
+
+  </div>
+
+}
+
+</section>
+
+
+<section class="panel permissions-panel">
+
+<div class="panel-header">
+
+  <div>
+    <h3>Permissões por perfil</h3>
+
+<span>
+Selecione um perfil para configurar seus acessos.
+</span>
+</div>
+
+<div class="profile-selector">
+
+<select
+  [(ngModel)]="perfilSelecionadoId"
+(ngModelChange)="carregarPermissoesPerfil()"
+  >
+
+  @for (
+  perfil of perfis;
+track perfil.id
+) {
+
+  <option
+    [ngValue]="perfil.id"
+    >
+    {{ perfil.nome }}
+  </option>
+
+}
+
+</select>
+
+</div>
+
+</div>
+
+
+<div class="permissions-grid">
+
+  @for (
+  permissao of permissoes;
+track permissao.id
+) {
+
+  <label
+    class="permission-item"
+  >
+
+  <input
+    type="checkbox"
+    [checked]="permissaoMarcada(permissao.id)"
+  (change)="alternarPermissao(
+  permissao.id,
+    $any($event.target).checked
+)"
+  >
+
+  <div>
+
+    <strong>
+      {{ permissao.nome }}
+  </strong>
+
+  <small>
+  {{
+    permissao.descricao ||
+    'Permissão de acesso ao MOD.'
+  }}
+  </small>
+
+  </div>
+
+  </label>
+
+}
+
+</div>
+
+
+<div class="permission-footer">
+
+<button
+  type="button"
+class="save-button"
+(click)="salvarPermissoes()"
+  >
+  Salvar permissões
+</button>
+
+</div>
+
+</section>
+
+</section>

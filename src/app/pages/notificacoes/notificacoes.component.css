@@ -251,24 +251,74 @@
   }
 
   .summary-grid {
-    flex-direction: column;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
   }
 
   .summary-box {
-    width: 100%;
+    min-width: 190px;
+    height: 78px !important;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+
+    padding: 8px 14px !important;
+
+    box-shadow:
+      0 2px 7px
+      rgba(15, 23, 42, 0.05);
   }
 
-  .notification-card {
-    grid-template-columns: 38px 1fr;
+  .summary-box span {
+    display: block;
+
+    color: #64748b;
+
+    font-size: 14px;
+    font-weight: 600;
   }
 
-  .notification-actions {
-    grid-column: 2;
+  .summary-box strong {
+    display: block;
+
+    margin: 0;
+
+    color: #2563eb;
+
+    font-size: 30px;
+    line-height: 1;
   }
 
-  .notification-header {
-    flex-direction: column;
-    gap: 5px;
+  .summary-box span {
+    display: block;
+
+    color: #64748b;
+
+    font-size: 14px;
+    font-weight: 600;
   }
 
+  .summary-box strong {
+    display: block;
+
+    margin: 0;
+
+    color: #2563eb;
+
+    font-size: 30px;
+    line-height: 1;
+  }
+
+  .summary-box small {
+    color: #94a3b8;
+    font-size: 11px;
+  }
+
+  .summary-box small {
+    color: #94a3b8;
+    font-size: 11px;
+  }
 }

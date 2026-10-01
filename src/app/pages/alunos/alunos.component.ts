@@ -7,8 +7,17 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { AlunoResponse } from '../../models/aluno-response';
-import { AlunoService } from '../../services/aluno.service';
+import {
+  ActivatedRoute
+} from '@angular/router';
+
+import {
+  AlunoResponse
+} from '../../models/aluno-response';
+
+import {
+  AlunoService
+} from '../../services/aluno.service';
 
 @Component({
   selector: 'app-alunos',
@@ -22,7 +31,8 @@ import { AlunoService } from '../../services/aluno.service';
   templateUrl: './alunos.component.html',
   styleUrl: './alunos.component.css'
 })
-export class AlunosComponent implements OnInit {
+export class AlunosComponent
+  implements OnInit {
 
   alunos: AlunoResponse[] = [];
   alunosFiltrados: AlunoResponse[] = [];
@@ -33,12 +43,33 @@ export class AlunosComponent implements OnInit {
   erro = '';
 
   constructor(
-    private readonly alunoService: AlunoService,
-    private readonly cdr: ChangeDetectorRef
+    private readonly alunoService:
+    AlunoService,
+
+    private readonly route:
+    ActivatedRoute,
+
+    private readonly cdr:
+    ChangeDetectorRef
   ) {
   }
 
   ngOnInit(): void {
+
+    this.route
+      .queryParamMap
+      .subscribe(params => {
+
+        this.filtro =
+          params.get('busca') ?? '';
+
+        if (this.alunos.length > 0) {
+          this.filtrar();
+          this.cdr.detectChanges();
+        }
+
+      });
+
     this.carregarAlunos();
   }
 
@@ -55,8 +86,10 @@ export class AlunosComponent implements OnInit {
 
         next: (dados) => {
 
-          this.alunos = dados ?? [];
-          this.alunosFiltrados = [...this.alunos];
+          this.alunos =
+            dados ?? [];
+
+          this.filtrar();
 
           this.carregando = false;
 
@@ -153,7 +186,8 @@ export class AlunosComponent implements OnInit {
   ): string {
 
     if (
-      situacao?.toUpperCase() === 'ATIVO'
+      situacao?.toUpperCase() ===
+      'ATIVO'
     ) {
       return 'ativo';
     }

@@ -188,37 +188,12 @@
         <span>Alterações Restritas</span>
       </a>
 
-      <!-- COMUNS -->
-      <a
-        class="menu-item"
-        href="javascript:void(0)"
-      >
-        <span class="menu-icon">●</span>
-        <span>Comuns</span>
-      </a>
-
-      <!-- NÍVEIS -->
-      <a
-        class="menu-item"
-        href="javascript:void(0)"
-      >
-        <span class="menu-icon">▥</span>
-        <span>Níveis</span>
-      </a>
-
-      <!-- CARGOS / MINISTÉRIO -->
-      <a
-        class="menu-item"
-        href="javascript:void(0)"
-      >
-        <span class="menu-icon">♟</span>
-        <span>Cargos/Ministério</span>
-      </a>
 
       <!-- RELATÓRIOS -->
       <a
         class="menu-item"
-        href="javascript:void(0)"
+        routerLink="/relatorios"
+        routerLinkActive="active"
       >
         <span class="menu-icon">▤</span>
         <span>Relatórios</span>
@@ -227,7 +202,8 @@
       <!-- USUÁRIOS E PERMISSÕES -->
       <a
         class="menu-item"
-        href="javascript:void(0)"
+        routerLink="/usuarios-permissoes"
+        routerLinkActive="active"
       >
         <span class="menu-icon">⚙</span>
         <span>Usuários e Permissões</span>
@@ -270,13 +246,15 @@
 
         <div class="search-box">
 
-          <span>
-            ⌕
-          </span>
+  <span>
+    ⌕
+  </span>
 
           <input
             type="text"
-            placeholder="Buscar aluno, comum, ministério..."
+            [(ngModel)]="buscaGlobal"
+            (keydown.enter)="buscarGlobal()"
+            placeholder="Buscar aluno, comum, nível ou ministério..."
           >
 
         </div>

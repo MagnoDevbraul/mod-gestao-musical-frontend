@@ -24,47 +24,65 @@ import {
   AlteracoesRestritasComponent
 } from './pages/alteracoes-restritas/alteracoes-restritas.component';
 
+import {
+  RelatoriosComponent
+} from './pages/relatorios/relatorios.component';
+
+import {
+  UsuariosPermissoesComponent
+} from './pages/usuarios-permissoes/usuarios-permissoes.component';
+
 export const routes: Routes = [
 
   {
     path: 'dashboard',
-    component: DashboardRouteComponent,
+    component: DashboardRouteComponent
   },
 
   {
     path: 'alunos',
-    component: AlunosComponent,
+    component: AlunosComponent
   },
 
   {
     path: 'historico',
-    component: HistoricoComponent,
+    component: HistoricoComponent
   },
 
   {
     path: 'auditoria',
-    component: AuditoriaComponent,
+    component: AuditoriaComponent
   },
 
   {
     path: 'notificacoes',
-    component: NotificacoesComponent,
+    component: NotificacoesComponent
   },
 
   {
     path: 'alteracoes-restritas',
-    component: AlteracoesRestritasComponent,
+    component: AlteracoesRestritasComponent
+  },
+
+  {
+    path: 'relatorios',
+    component: RelatoriosComponent
+  },
+
+  {
+    path: 'usuarios-permissoes',
+    component: UsuariosPermissoesComponent
   },
 
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'dashboard',
+    redirectTo: 'dashboard'
   },
 
   {
     path: '**',
-    redirectTo: 'dashboard',
-  },
+    redirectTo: 'dashboard'
+  }
 
 ];
