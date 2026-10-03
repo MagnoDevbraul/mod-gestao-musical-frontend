@@ -21,6 +21,10 @@ import {
 } from './pages/notificacoes/notificacoes.component';
 
 import {
+  CompartilhamentosComponent
+} from './pages/compartilhamentos/compartilhamentos.component';
+
+import {
   AlteracoesRestritasComponent
 } from './pages/alteracoes-restritas/alteracoes-restritas.component';
 
@@ -35,61 +39,64 @@ import {
 import { ExclusoesComponent } from './pages/exclusoes/exclusoes.component';
 
 export const routes: Routes = [
-
   {
     path: 'dashboard',
-    component: DashboardRouteComponent
+    component: DashboardRouteComponent,
   },
 
   {
     path: 'alunos',
-    component: AlunosComponent
+    component: AlunosComponent,
   },
 
   {
     path: 'historico',
-    component: HistoricoComponent
+    component: HistoricoComponent,
   },
 
   {
     path: 'auditoria',
-    component: AuditoriaComponent
+    component: AuditoriaComponent,
   },
 
   {
     path: 'notificacoes',
-    component: NotificacoesComponent
+    component: NotificacoesComponent,
+  },
+
+  {
+    path: 'compartilhamentos',
+    component: CompartilhamentosComponent,
   },
 
   {
     path: 'alteracoes-restritas',
-    component: AlteracoesRestritasComponent
+    component: AlteracoesRestritasComponent,
   },
 
   {
     path: 'relatorios',
-    component: RelatoriosComponent
+    component: RelatoriosComponent,
   },
 
   {
     path: 'usuarios-permissoes',
-    component: UsuariosPermissoesComponent
+    component: UsuariosPermissoesComponent,
   },
 
   {
     path: 'exclusoes',
-    component: ExclusoesComponent
+    component: ExclusoesComponent,
   },
 
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'dashboard'
+    redirectTo: 'dashboard',
   },
 
   {
     path: '**',
-    redirectTo: 'dashboard'
-  }
-
+    redirectTo: 'dashboard',
+  },
 ];

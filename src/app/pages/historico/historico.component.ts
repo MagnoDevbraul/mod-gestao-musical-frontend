@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { HistoricoResponse } from '../../models/historico-response';
 import { HistoricoService } from '../../services/historico.service';
 
+
 @Component({
   selector: 'app-historico',
   standalone: true,
@@ -32,15 +33,18 @@ export class HistoricoComponent implements OnInit {
   carregando = false;
   erro = '';
 
+
   constructor(
     private readonly historicoService: HistoricoService,
     private readonly cdr: ChangeDetectorRef
   ) {
   }
 
+
   ngOnInit(): void {
     this.carregarHistorico();
   }
+
 
   carregarHistorico(): void {
 
@@ -55,7 +59,14 @@ export class HistoricoComponent implements OnInit {
 
         next: (dados) => {
 
-          this.historicos = dados ?? [];
+          /*
+           * Ordenação decrescente:
+           * registros mais recentes aparecem primeiro.
+           */
+          this.historicos =
+            this.ordenarPorDataDecrescente(
+              dados ?? []
+            );
 
           this.historicosFiltrados = [
             ...this.historicos
@@ -97,6 +108,7 @@ export class HistoricoComponent implements OnInit {
       });
   }
 
+
   filtrar(): void {
 
     const termo =
@@ -113,7 +125,7 @@ export class HistoricoComponent implements OnInit {
       return;
     }
 
-    this.historicosFiltrados =
+    const resultado =
       this.historicos.filter(
         historico => {
 
@@ -154,7 +166,13 @@ export class HistoricoComponent implements OnInit {
           );
         }
       );
+
+    this.historicosFiltrados =
+      this.ordenarPorDataDecrescente(
+        resultado
+      );
   }
+
 
   limparFiltro(): void {
 
@@ -164,6 +182,7 @@ export class HistoricoComponent implements OnInit {
       ...this.historicos
     ];
   }
+
 
   nomeEvento(
     tipoEvento: string
@@ -198,11 +217,20 @@ export class HistoricoComponent implements OnInit {
       ALTERACAO_RESTRITA_ALUNO_REJEITADA:
         'Alteração Restrita Rejeitada',
 
+      ALTERACAO_RESTRITA_ALUNO_DIRETA_SECRETARIA:
+        'Alteração Restrita Direta',
+
       CADASTRO_ALUNO:
         'Cadastro de Aluno',
 
       EXCLUSAO_ALUNO:
         'Exclusão de Aluno',
+
+      EXCLUSAO_ALUNO_SAM:
+        'Exclusão no SAM',
+
+      ARQUIVAMENTO_ALUNO_MOD:
+        'Arquivamento no MOD',
 
       RESTAURACAO_ALUNO:
         'Restauração de Aluno',
@@ -216,6 +244,7 @@ export class HistoricoComponent implements OnInit {
       ?? tipoEvento;
   }
 
+
   situacaoAnterior(
     historico: HistoricoResponse
   ): string {
@@ -224,15 +253,19 @@ export class HistoricoComponent implements OnInit {
       historico.tipoEvento
         ?.toUpperCase();
 
+
     /*
-     * Exclusão lógica:
+     * Arquivamento/exclusão:
      * antes o aluno estava ativo.
      */
     if (
-      evento === 'EXCLUSAO_ALUNO'
+      evento === 'EXCLUSAO_ALUNO' ||
+      evento === 'EXCLUSAO_ALUNO_SAM' ||
+      evento === 'ARQUIVAMENTO_ALUNO_MOD'
     ) {
       return 'ATIVO';
     }
+
 
     /*
      * Restauração:
@@ -244,6 +277,7 @@ export class HistoricoComponent implements OnInit {
       return 'ARQUIVADO';
     }
 
+
     /*
      * Cadastro não possui situação anterior.
      */
@@ -252,6 +286,7 @@ export class HistoricoComponent implements OnInit {
     ) {
       return '-';
     }
+
 
     /*
      * Eventos musicais não alteram
@@ -265,6 +300,7 @@ export class HistoricoComponent implements OnInit {
       return '-';
     }
 
+
     /*
      * Tenta recuperar a situação
      * registrada no valor anterior.
@@ -277,6 +313,7 @@ export class HistoricoComponent implements OnInit {
     return situacao ?? '-';
   }
 
+
   situacaoNova(
     historico: HistoricoResponse
   ): string {
@@ -285,15 +322,19 @@ export class HistoricoComponent implements OnInit {
       historico.tipoEvento
         ?.toUpperCase();
 
+
     /*
-     * No MOD, exclusão significa
-     * arquivamento lógico.
+     * No MOD, exclusão/arquivamento
+     * significa arquivamento lógico.
      */
     if (
-      evento === 'EXCLUSAO_ALUNO'
+      evento === 'EXCLUSAO_ALUNO' ||
+      evento === 'EXCLUSAO_ALUNO_SAM' ||
+      evento === 'ARQUIVAMENTO_ALUNO_MOD'
     ) {
       return 'ARQUIVADO';
     }
+
 
     /*
      * Restauração devolve o aluno
@@ -305,6 +346,7 @@ export class HistoricoComponent implements OnInit {
       return 'ATIVO';
     }
 
+
     /*
      * Aluno recém-cadastrado
      * inicia ativo no MOD.
@@ -314,6 +356,7 @@ export class HistoricoComponent implements OnInit {
     ) {
       return 'ATIVO';
     }
+
 
     /*
      * MSA, MTS, método, hino e escala
@@ -327,6 +370,7 @@ export class HistoricoComponent implements OnInit {
       return '-';
     }
 
+
     /*
      * Tenta recuperar a situação
      * registrada no valor novo.
@@ -338,6 +382,7 @@ export class HistoricoComponent implements OnInit {
 
     return situacao ?? '-';
   }
+
 
   classeSituacao(
     situacao: string
@@ -358,6 +403,31 @@ export class HistoricoComponent implements OnInit {
     return 'neutro';
   }
 
+
+  private ordenarPorDataDecrescente(
+    historicos: HistoricoResponse[]
+  ): HistoricoResponse[] {
+
+    return [...historicos]
+      .sort(
+        (a, b) => {
+
+          const dataA =
+            a.dataHora
+              ? new Date(a.dataHora).getTime()
+              : 0;
+
+          const dataB =
+            b.dataHora
+              ? new Date(b.dataHora).getTime()
+              : 0;
+
+          return dataB - dataA;
+        }
+      );
+  }
+
+
   private ehEventoMusical(
     evento: string
   ): boolean {
@@ -370,6 +440,7 @@ export class HistoricoComponent implements OnInit {
       'REGISTRO_ESCALA'
     ].includes(evento);
   }
+
 
   private extrairSituacao(
     valor: string | null | undefined
@@ -393,6 +464,7 @@ export class HistoricoComponent implements OnInit {
       return null;
     }
 
+
     /*
      * Caso o backend já envie somente
      * ATIVO ou ARQUIVADO.
@@ -405,6 +477,7 @@ export class HistoricoComponent implements OnInit {
     if (direta) {
       return direta;
     }
+
 
     /*
      * Formato Java:
@@ -424,6 +497,7 @@ export class HistoricoComponent implements OnInit {
         formatoJava[1]
       );
     }
+
 
     /*
      * Formato JSON:
@@ -447,6 +521,7 @@ export class HistoricoComponent implements OnInit {
     return null;
   }
 
+
   private normalizarSituacao(
     valor: string
   ): string | null {
@@ -456,7 +531,7 @@ export class HistoricoComponent implements OnInit {
         .trim()
         .toUpperCase()
         .replace(
-          /["'{}[\],;]/g,
+          /["'{}\[\],;]/g,
           ''
         );
 

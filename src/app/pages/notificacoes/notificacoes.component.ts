@@ -24,24 +24,32 @@ import {
   NotificacaoService
 } from '../../services/notificacao.service';
 
+
 @Component({
   selector: 'app-notificacoes',
   standalone: true,
+
   imports: [
     CommonModule,
     FormsModule
   ],
-  templateUrl: './notificacoes.component.html',
-  styleUrl: './notificacoes.component.css',
+
+  templateUrl:
+    './notificacoes.component.html',
+
+  styleUrl:
+    './notificacoes.component.css',
 })
 export class NotificacoesComponent
   implements OnInit {
 
-  notificacoes: NotificacaoResponse[] = [];
+  notificacoes:
+    NotificacaoResponse[] = [];
 
   carregando = false;
   erro = '';
   termoBusca = '';
+
 
   constructor(
     private readonly service:
@@ -52,9 +60,11 @@ export class NotificacoesComponent
   ) {
   }
 
+
   ngOnInit(): void {
     this.carregarNotificacoes();
   }
+
 
   carregarNotificacoes(): void {
 
@@ -68,7 +78,9 @@ export class NotificacoesComponent
         next: (dados) => {
 
           this.notificacoes =
-            dados ?? [];
+            this.ordenarPorDataDecrescente(
+              dados ?? []
+            );
 
           this.carregando = false;
 
@@ -85,14 +97,18 @@ export class NotificacoesComponent
           );
 
           this.erro =
-            this.obterMensagemErro(erro);
+            this.obterMensagemErro(
+              erro
+            );
 
           this.carregando = false;
 
           this.cdr.detectChanges();
         }
+
       });
   }
+
 
   get notificacoesFiltradas():
     NotificacaoResponse[] {
@@ -103,29 +119,38 @@ export class NotificacoesComponent
         .toLowerCase();
 
     if (!termo) {
-      return this.notificacoes;
+
+      return this.ordenarPorDataDecrescente(
+        this.notificacoes
+      );
     }
 
-    return this.notificacoes.filter(
-      (notificacao) => {
+    const resultado =
+      this.notificacoes.filter(
+        (notificacao) => {
 
-        const campos = [
-          notificacao.titulo,
-          notificacao.mensagem,
-          notificacao.tipoEvento,
-          notificacao.usuarioNome,
-          notificacao.alunoNome,
-        ];
+          const campos = [
+            notificacao.titulo,
+            notificacao.mensagem,
+            notificacao.tipoEvento,
+            notificacao.usuarioNome,
+            notificacao.alunoNome,
+          ];
 
-        return campos.some(
-          (campo) =>
-            String(campo ?? '')
-              .toLowerCase()
-              .includes(termo)
-        );
-      }
+          return campos.some(
+            (campo) =>
+              String(campo ?? '')
+                .toLowerCase()
+                .includes(termo)
+          );
+        }
+      );
+
+    return this.ordenarPorDataDecrescente(
+      resultado
     );
   }
+
 
   get totalNaoLidas(): number {
 
@@ -134,6 +159,7 @@ export class NotificacoesComponent
         !notificacao.lida
     ).length;
   }
+
 
   marcarComoLida(
     notificacao: NotificacaoResponse
@@ -165,9 +191,10 @@ export class NotificacoesComponent
             this.notificacoes[indice] =
               atualizada;
 
-            this.notificacoes = [
-              ...this.notificacoes
-            ];
+            this.notificacoes =
+              this.ordenarPorDataDecrescente(
+                this.notificacoes
+              );
           }
 
           this.cdr.detectChanges();
@@ -183,12 +210,16 @@ export class NotificacoesComponent
           );
 
           this.erro =
-            this.obterMensagemErro(erro);
+            this.obterMensagemErro(
+              erro
+            );
 
           this.cdr.detectChanges();
         }
+
       });
   }
+
 
   nomeEvento(
     evento: string | null | undefined
@@ -209,6 +240,12 @@ export class NotificacoesComponent
 
       EXCLUSAO_ALUNO:
         'Arquivamento de aluno',
+
+      EXCLUSAO_ALUNO_SAM:
+        'Exclusão no SAM',
+
+      ARQUIVAMENTO_ALUNO_MOD:
+        'Arquivamento no MOD',
 
       RESTAURACAO_ALUNO:
         'Restauração de aluno',
@@ -252,15 +289,47 @@ export class NotificacoesComponent
         );
   }
 
+
+  private ordenarPorDataDecrescente(
+    notificacoes:
+    NotificacaoResponse[]
+  ): NotificacaoResponse[] {
+
+    return [...notificacoes]
+      .sort(
+        (a, b) => {
+
+          const dataA =
+            a.dataHora
+              ? new Date(
+                a.dataHora
+              ).getTime()
+              : 0;
+
+          const dataB =
+            b.dataHora
+              ? new Date(
+                b.dataHora
+              ).getTime()
+              : 0;
+
+          return dataB - dataA;
+        }
+      );
+  }
+
+
   private obterMensagemErro(
     erro: HttpErrorResponse
   ): string {
 
     if (erro.status === 401) {
+
       return 'Sessão expirada ou usuário não autenticado.';
     }
 
     if (erro.status === 403) {
+
       return 'Você não possui permissão para consultar as notificações.';
     }
 
@@ -269,6 +338,7 @@ export class NotificacoesComponent
       'string' &&
       erro.error.trim()
     ) {
+
       return erro.error;
     }
 
@@ -277,9 +347,11 @@ export class NotificacoesComponent
       typeof erro.error.message ===
       'string'
     ) {
+
       return erro.error.message;
     }
 
     return 'Não foi possível carregar as notificações.';
   }
+
 }

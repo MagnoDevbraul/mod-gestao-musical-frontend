@@ -1,0 +1,412 @@
+<section class="compartilhamentos-page">
+
+  <div class="page-heading">
+
+    <div>
+
+      <h2>
+        Compartilhamentos
+      </h2>
+
+      <p>
+        Compartilhamento de alunos
+        entre Comuns do setor.
+      </p>
+
+    </div>
+
+    <button
+      type="button"
+      class="refresh-button"
+      [disabled]="
+        carregando ||
+        processando
+      "
+      (click)="carregarDados()"
+    >
+      ↻ Atualizar
+    </button>
+
+  </div>
+
+
+  @if (erro) {
+
+  <div class="alert error">
+    {{ erro }}
+  </div>
+
+  }
+
+
+  @if (mensagem) {
+
+  <div class="alert success">
+    {{ mensagem }}
+  </div>
+
+  }
+
+
+  @if (carregando) {
+
+  <div class="state-message">
+    Carregando dados...
+  </div>
+
+  } @else {
+
+
+  <!-- RESUMO -->
+  <section class="summary-grid">
+
+    <article class="summary-card">
+
+      <span>
+        Compartilhamentos
+      </span>
+
+      <strong>
+        {{ compartilhamentos.length }}
+      </strong>
+
+    </article>
+
+
+    <article class="summary-card">
+
+      <span>
+        Alunos disponíveis
+      </span>
+
+      <strong>
+        {{ alunos.length }}
+      </strong>
+
+    </article>
+
+
+    <article class="summary-card">
+
+      <span>
+        Comuns cadastradas
+      </span>
+
+      <strong>
+        {{ comuns.length }}
+      </strong>
+
+    </article>
+
+  </section>
+
+
+  <!-- NOVO COMPARTILHAMENTO -->
+  <section class="content-card">
+
+    <div class="section-header">
+
+      <div>
+
+        <h3>
+          Novo compartilhamento
+        </h3>
+
+        <p>
+          Selecione o aluno e a
+          Comum de destino.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="form-grid">
+
+      <div class="form-group">
+
+        <label for="aluno">
+          Aluno
+        </label>
+
+        <select
+          id="aluno"
+          [(ngModel)]="alunoId"
+          (ngModelChange)="
+            aoSelecionarAluno()
+          "
+        >
+
+          <option
+            [ngValue]="null"
+          >
+            Selecione um aluno
+          </option>
+
+          @for (
+          aluno of alunos;
+          track aluno.id
+          ) {
+
+          <option
+            [ngValue]="aluno.id"
+          >
+            {{ aluno.nome }}
+            —
+            {{
+            aluno.comumNome
+            || 'Sem Comum'
+            }}
+          </option>
+
+          }
+
+        </select>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="comumDestino">
+          Comum de destino
+        </label>
+
+        <select
+          id="comumDestino"
+          [(ngModel)]="
+            comumDestinoId
+          "
+          [disabled]="
+            alunoId === null
+          "
+        >
+
+          <option
+            [ngValue]="null"
+          >
+            Selecione a Comum
+          </option>
+
+          @for (
+          comum of comunsDestino;
+          track comum.id
+          ) {
+
+          <option
+            [ngValue]="comum.id"
+          >
+            {{ comum.nome }}
+          </option>
+
+          }
+
+        </select>
+
+      </div>
+
+
+      <div
+        class="origin-info"
+      >
+
+        <span>
+          Comum de origem
+        </span>
+
+        <strong>
+          {{
+          alunoSelecionado
+          ?.comumNome
+          || '-'
+          }}
+        </strong>
+
+      </div>
+
+
+      <div class="form-action">
+
+        <button
+          type="button"
+          class="share-button"
+          [disabled]="
+            processando ||
+            alunoId === null ||
+            comumDestinoId === null
+          "
+          (click)="compartilhar()"
+        >
+          {{
+          processando
+          ? 'Compartilhando...'
+          : 'Compartilhar aluno'
+          }}
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- HISTÓRICO -->
+  <section class="content-card">
+
+    <div class="section-header">
+
+      <div>
+
+        <h3>
+          Compartilhamentos registrados
+        </h3>
+
+        <p>
+          Registros mais recentes
+          aparecem primeiro.
+        </p>
+
+      </div>
+
+      <input
+        type="text"
+        [(ngModel)]="termoBusca"
+        placeholder="Buscar aluno, origem, destino ou usuário..."
+      >
+
+    </div>
+
+
+    @if (
+    compartilhamentosFiltrados
+    .length === 0
+    ) {
+
+    <div class="state-message small">
+
+      Nenhum compartilhamento
+      encontrado.
+
+    </div>
+
+    } @else {
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+
+        <tr>
+
+          <th>
+            Data
+          </th>
+
+          <th>
+            Aluno
+          </th>
+
+          <th>
+            Comum de origem
+          </th>
+
+          <th>
+            Comum de destino
+          </th>
+
+          <th>
+            Compartilhado por
+          </th>
+
+        </tr>
+
+        </thead>
+
+
+        <tbody>
+
+        @for (
+        compartilhamento of
+        compartilhamentosFiltrados;
+        track compartilhamento.id
+        ) {
+
+        <tr>
+
+          <td class="date-cell">
+
+            {{
+            compartilhamento
+            .criadoEm
+            | date:
+            'dd/MM/yyyy HH:mm'
+            }}
+
+          </td>
+
+          <td>
+
+            <strong>
+              {{
+              compartilhamento
+              .alunoNome
+              }}
+            </strong>
+
+          </td>
+
+          <td>
+
+            {{
+            compartilhamento
+            .comumOrigemNome
+            || '-'
+            }}
+
+          </td>
+
+          <td>
+
+            <span
+              class="destination-badge"
+            >
+
+              {{
+                compartilhamento
+                  .comumDestinoNome
+              }}
+
+            </span>
+
+          </td>
+
+          <td>
+
+            {{
+            compartilhamento
+            .compartilhadoPorUsuarioNome
+            || 'Sistema'
+            }}
+
+          </td>
+
+        </tr>
+
+        }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    }
+
+  </section>
+
+  }
+
+</section>

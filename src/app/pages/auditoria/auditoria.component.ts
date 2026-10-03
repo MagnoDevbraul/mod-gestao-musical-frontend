@@ -24,20 +24,27 @@ import {
   AuditoriaService
 } from '../../services/auditoria.service';
 
+
 @Component({
   selector: 'app-auditoria',
   standalone: true,
+
   imports: [
     CommonModule,
     FormsModule
   ],
-  templateUrl: './auditoria.component.html',
-  styleUrl: './auditoria.component.css',
+
+  templateUrl:
+    './auditoria.component.html',
+
+  styleUrl:
+    './auditoria.component.css',
 })
 export class AuditoriaComponent
   implements OnInit {
 
-  registros: AuditoriaResponse[] = [];
+  registros:
+    AuditoriaResponse[] = [];
 
   carregando = false;
   erro = '';
@@ -46,6 +53,7 @@ export class AuditoriaComponent
 
   auditoriaSelecionada:
     AuditoriaResponse | null = null;
+
 
   constructor(
     private readonly service:
@@ -56,9 +64,11 @@ export class AuditoriaComponent
   ) {
   }
 
+
   ngOnInit(): void {
     this.carregarAuditorias();
   }
+
 
   carregarAuditorias(): void {
 
@@ -72,7 +82,9 @@ export class AuditoriaComponent
         next: (dados) => {
 
           this.registros =
-            dados ?? [];
+            this.ordenarPorDataDecrescente(
+              dados ?? []
+            );
 
           this.carregando = false;
 
@@ -97,8 +109,10 @@ export class AuditoriaComponent
 
           this.cdr.detectChanges();
         }
+
       });
   }
+
 
   get registrosFiltrados():
     AuditoriaResponse[] {
@@ -109,35 +123,44 @@ export class AuditoriaComponent
         .toLowerCase();
 
     if (!termo) {
-      return this.registros;
+
+      return this.ordenarPorDataDecrescente(
+        this.registros
+      );
     }
 
-    return this.registros.filter(
-      (registro) => {
+    const resultado =
+      this.registros.filter(
+        (registro) => {
 
-        const campos = [
-          registro.usuarioNome,
-          registro.acao,
-          registro.tabelaAfetada,
-          registro.registroId,
-          registro.descricao,
-          this.nomeAcao(
-            registro.acao
-          ),
-          this.nomeTabela(
-            registro.tabelaAfetada
-          ),
-        ];
+          const campos = [
+            registro.usuarioNome,
+            registro.acao,
+            registro.tabelaAfetada,
+            registro.registroId,
+            registro.descricao,
+            this.nomeAcao(
+              registro.acao
+            ),
+            this.nomeTabela(
+              registro.tabelaAfetada
+            ),
+          ];
 
-        return campos.some(
-          (campo) =>
-            String(campo ?? '')
-              .toLowerCase()
-              .includes(termo)
-        );
-      }
+          return campos.some(
+            (campo) =>
+              String(campo ?? '')
+                .toLowerCase()
+                .includes(termo)
+          );
+        }
+      );
+
+    return this.ordenarPorDataDecrescente(
+      resultado
     );
   }
+
 
   abrirDetalhes(
     auditoria: AuditoriaResponse
@@ -147,11 +170,13 @@ export class AuditoriaComponent
       auditoria;
   }
 
+
   fecharDetalhes(): void {
 
     this.auditoriaSelecionada =
       null;
   }
+
 
   nomeAcao(
     acao: string | null | undefined
@@ -172,6 +197,12 @@ export class AuditoriaComponent
 
       EXCLUSAO_ALUNO:
         'Arquivamento de aluno',
+
+      EXCLUSAO_ALUNO_SAM:
+        'Exclusão no SAM',
+
+      ARQUIVAMENTO_ALUNO_MOD:
+        'Arquivamento no MOD',
 
       RESTAURACAO_ALUNO:
         'Restauração de aluno',
@@ -215,6 +246,7 @@ export class AuditoriaComponent
         );
   }
 
+
   nomeTabela(
     tabela: string | null | undefined
   ): string {
@@ -252,6 +284,7 @@ export class AuditoriaComponent
         );
   }
 
+
   formatarDados(
     dados:
       Record<string, unknown>
@@ -274,6 +307,36 @@ export class AuditoriaComponent
       )
       .join('\n');
   }
+
+
+  private ordenarPorDataDecrescente(
+    registros:
+    AuditoriaResponse[]
+  ): AuditoriaResponse[] {
+
+    return [...registros]
+      .sort(
+        (a, b) => {
+
+          const dataA =
+            a.criadoEm
+              ? new Date(
+                a.criadoEm
+              ).getTime()
+              : 0;
+
+          const dataB =
+            b.criadoEm
+              ? new Date(
+                b.criadoEm
+              ).getTime()
+              : 0;
+
+          return dataB - dataA;
+        }
+      );
+  }
+
 
   private nomeCampo(
     campo: string
@@ -335,6 +398,7 @@ export class AuditoriaComponent
       campo;
   }
 
+
   private formatarValor(
     valor: unknown
   ): string {
@@ -347,6 +411,7 @@ export class AuditoriaComponent
     }
 
     if (typeof valor === 'boolean') {
+
       return valor
         ? 'Sim'
         : 'Não';
@@ -355,15 +420,18 @@ export class AuditoriaComponent
     return String(valor);
   }
 
+
   private obterMensagemErro(
     erro: HttpErrorResponse
   ): string {
 
     if (erro.status === 401) {
+
       return 'Sessão expirada ou usuário não autenticado.';
     }
 
     if (erro.status === 403) {
+
       return 'Você não possui permissão para consultar a auditoria.';
     }
 
@@ -372,6 +440,7 @@ export class AuditoriaComponent
       'string' &&
       erro.error.trim()
     ) {
+
       return erro.error;
     }
 
@@ -380,9 +449,11 @@ export class AuditoriaComponent
       typeof erro.error.message ===
       'string'
     ) {
+
       return erro.error.message;
     }
 
     return 'Não foi possível carregar os registros de auditoria.';
   }
+
 }
