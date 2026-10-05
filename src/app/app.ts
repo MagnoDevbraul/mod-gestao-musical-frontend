@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
+
 import {
   ChangeDetectorRef,
   Component,
   OnInit
 } from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -18,8 +20,15 @@ import {
   DashboardResponse
 } from './models/dashboard-response';
 
-import { DashboardService } from './services/dashboard.service';
-import { AuthService } from './services/auth.service';
+import {
+  AuthService,
+  SessaoResponse
+} from './services/auth.service';
+
+import {
+  DashboardService
+} from './services/dashboard.service';
+
 
 @Component({
   selector: 'app-root',
@@ -37,7 +46,13 @@ import { AuthService } from './services/auth.service';
 })
 export class App implements OnInit {
 
-  dashboard: DashboardResponse | null = null;
+  dashboard:
+    DashboardResponse | null =
+    null;
+
+  sessao:
+    SessaoResponse | null =
+    null;
 
   carregando = false;
   autenticado = false;
@@ -51,13 +66,22 @@ export class App implements OnInit {
   private erroLogin = '';
   private erroDashboard = '';
 
+
   constructor(
-    private readonly dashboardService: DashboardService,
-    private readonly authService: AuthService,
-    private readonly router: Router,
-    private readonly cdr: ChangeDetectorRef
+    private readonly dashboardService:
+    DashboardService,
+
+    private readonly authService:
+    AuthService,
+
+    private readonly router:
+    Router,
+
+    private readonly cdr:
+    ChangeDetectorRef
   ) {
   }
+
 
   get erro(): string {
 
@@ -68,9 +92,12 @@ export class App implements OnInit {
     return this.erroLogin;
   }
 
+
   ngOnInit(): void {
+
     this.verificarSessao();
   }
+
 
   verificarSessao(): void {
 
@@ -78,25 +105,78 @@ export class App implements OnInit {
       .sessao()
       .subscribe({
 
-        next: () => {
+        next: (
+          sessao:
+          SessaoResponse
+        ) => {
 
-          this.autenticado = true;
+          this.sessao =
+            sessao;
 
-          this.erroLogin = '';
-          this.erroDashboard = '';
+          this.autenticado =
+            true;
 
-          this.cdr.detectChanges();
+          this.erroLogin =
+            '';
 
-          this.carregarDashboard();
+          this.erroDashboard =
+            '';
+
+          /*
+           * SECRETARIA:
+           * pode permanecer/acessar Dashboard.
+           *
+           * Outros perfis:
+           * são enviados para Alunos.
+           */
+          if (
+            this.podeAcessarDashboard()
+          ) {
+
+            this.cdr.detectChanges();
+
+            this.carregarDashboard();
+
+            return;
+          }
+
+
+          this.dashboard =
+            null;
+
+          if (
+            this.estaNoDashboard()
+          ) {
+
+            this.router
+              .navigateByUrl(
+                '/alunos'
+              )
+              .then(() => {
+
+                this.cdr.detectChanges();
+              });
+
+          } else {
+
+            this.cdr.detectChanges();
+          }
         },
+
 
         error: () => {
 
-          this.autenticado = false;
+          this.autenticado =
+            false;
 
-          this.dashboard = null;
+          this.sessao =
+            null;
 
-          this.erroDashboard = '';
+          this.dashboard =
+            null;
+
+          this.erroDashboard =
+            '';
 
           this.cdr.detectChanges();
         }
@@ -104,18 +184,26 @@ export class App implements OnInit {
       });
   }
 
+
   login(): void {
 
-    this.erroLogin = '';
-    this.erroDashboard = '';
-    this.mensagemLogin = '';
+    this.erroLogin =
+      '';
+
+    this.erroDashboard =
+      '';
+
+    this.mensagemLogin =
+      '';
+
 
     if (
       !this.email.trim() ||
       !this.senha
     ) {
 
-      this.autenticado = false;
+      this.autenticado =
+        false;
 
       this.erroLogin =
         'Informe o e-mail e a senha.';
@@ -125,6 +213,7 @@ export class App implements OnInit {
       return;
     }
 
+
     this.authService
       .login(
         this.email.trim(),
@@ -132,42 +221,56 @@ export class App implements OnInit {
       )
       .subscribe({
 
-        next: (resposta) => {
+        next: (
+          resposta
+        ) => {
 
-          this.autenticado = true;
+          this.erroLogin =
+            '';
 
-          this.erroLogin = '';
-          this.erroDashboard = '';
+          this.erroDashboard =
+            '';
 
           this.mensagemLogin =
             resposta.mensagem;
 
-          this.senha = '';
+          this.senha =
+            '';
 
-          this.router
-            .navigateByUrl('/dashboard')
-            .then(() => {
-
-              this.cdr.detectChanges();
-
-              this.carregarDashboard();
-            });
+          /*
+           * Após o login consultamos
+           * /auth/sessao para descobrir
+           * usuário e perfil reais.
+           */
+          this.carregarSessaoAposLogin();
         },
 
-        error: (erro) => {
+
+        error: (
+          erro
+        ) => {
 
           console.error(
             'Erro no login:',
             erro
           );
 
-          this.autenticado = false;
+          this.autenticado =
+            false;
 
-          this.dashboard = null;
+          this.sessao =
+            null;
 
-          this.erroDashboard = '';
+          this.dashboard =
+            null;
 
-          if (erro.status === 401) {
+          this.erroDashboard =
+            '';
+
+
+          if (
+            erro.status === 401
+          ) {
 
             this.erroLogin =
               'E-mail ou senha inválidos.';
@@ -178,17 +281,112 @@ export class App implements OnInit {
               'Não foi possível realizar o login.';
           }
 
+
           this.cdr.detectChanges();
         }
 
       });
   }
 
+
+  private carregarSessaoAposLogin():
+    void {
+
+    this.authService
+      .sessao()
+      .subscribe({
+
+        next: (
+          sessao:
+          SessaoResponse
+        ) => {
+
+          this.sessao =
+            sessao;
+
+          this.autenticado =
+            true;
+
+          this.erroLogin =
+            '';
+
+          this.erroDashboard =
+            '';
+
+
+          const destino =
+            this.podeAcessarDashboard()
+              ? '/dashboard'
+              : '/alunos';
+
+
+          this.router
+            .navigateByUrl(
+              destino
+            )
+            .then(() => {
+
+              this.cdr.detectChanges();
+
+              if (
+                this.podeAcessarDashboard()
+              ) {
+
+                this.carregarDashboard();
+
+              } else {
+
+                this.dashboard =
+                  null;
+
+                this.carregando =
+                  false;
+
+                this.cdr.detectChanges();
+              }
+            });
+        },
+
+
+        error: (
+          erro
+        ) => {
+
+          console.error(
+            'Erro ao consultar sessão:',
+            erro
+          );
+
+          this.autenticado =
+            false;
+
+          this.sessao =
+            null;
+
+          this.dashboard =
+            null;
+
+          this.erroLogin =
+            'Não foi possível identificar o usuário autenticado.';
+
+          this.cdr.detectChanges();
+        }
+
+      });
+  }
+
+
   logout(): void {
 
-    this.erroLogin = '';
-    this.erroDashboard = '';
-    this.mensagemLogin = '';
+    this.erroLogin =
+      '';
+
+    this.erroDashboard =
+      '';
+
+    this.mensagemLogin =
+      '';
+
 
     this.authService
       .logout()
@@ -199,7 +397,10 @@ export class App implements OnInit {
           this.limparSessaoLocal();
         },
 
-        error: (erro) => {
+
+        error: (
+          erro
+        ) => {
 
           console.error(
             'Erro no logout:',
@@ -215,76 +416,158 @@ export class App implements OnInit {
       });
   }
 
-  private limparSessaoLocal(): void {
 
-    this.autenticado = false;
+  private limparSessaoLocal():
+    void {
 
-    this.dashboard = null;
+    this.autenticado =
+      false;
 
-    this.carregando = false;
+    this.sessao =
+      null;
 
-    this.email = '';
-    this.senha = '';
+    this.dashboard =
+      null;
 
-    this.erroLogin = '';
-    this.erroDashboard = '';
+    this.carregando =
+      false;
 
-    this.mensagemLogin = '';
+    this.email =
+      '';
+
+    this.senha =
+      '';
+
+    this.erroLogin =
+      '';
+
+    this.erroDashboard =
+      '';
+
+    this.mensagemLogin =
+      '';
+
 
     this.router
-      .navigateByUrl('/dashboard')
+      .navigateByUrl(
+        '/dashboard'
+      )
       .then(() => {
+
         this.cdr.detectChanges();
       });
   }
 
+
   carregarDashboard(): void {
 
-    this.carregando = true;
+    /*
+     * Segurança visual:
+     * não tenta chamar a API
+     * se o perfil não for Secretaria.
+     */
+    if (
+      !this.podeAcessarDashboard()
+    ) {
 
-    this.erroDashboard = '';
+      this.dashboard =
+        null;
+
+      this.carregando =
+        false;
+
+      this.erroDashboard =
+        '';
+
+      this.router
+        .navigateByUrl(
+          '/alunos'
+        )
+        .then(() => {
+
+          this.cdr.detectChanges();
+        });
+
+      return;
+    }
+
+
+    this.carregando =
+      true;
+
+    this.erroDashboard =
+      '';
 
     this.cdr.detectChanges();
+
 
     this.dashboardService
       .buscarDashboardSecretaria()
       .subscribe({
 
-        next: (dados) => {
+        next: (
+          dados
+        ) => {
 
-          this.dashboard = dados;
+          this.dashboard =
+            dados;
 
-          this.erroDashboard = '';
+          this.erroDashboard =
+            '';
 
-          this.carregando = false;
+          this.carregando =
+            false;
 
           this.cdr.detectChanges();
         },
 
-        error: (erro) => {
+
+        error: (
+          erro
+        ) => {
 
           console.error(
             'Erro ao carregar Dashboard:',
             erro
           );
 
-          this.carregando = false;
+          this.carregando =
+            false;
 
-          if (erro.status === 401) {
 
-            this.dashboard = null;
+          if (
+            erro.status === 401
+          ) {
 
-            this.autenticado = false;
+            this.dashboard =
+              null;
 
-            this.erroDashboard = '';
+            this.sessao =
+              null;
+
+            this.autenticado =
+              false;
+
+            this.erroDashboard =
+              '';
 
             this.erroLogin =
               'Sua sessão expirou. Faça login novamente.';
 
-          } else if (erro.status === 403) {
+          } else if (
+            erro.status === 403
+          ) {
+
+            this.dashboard =
+              null;
 
             this.erroDashboard =
-              'O usuário autenticado não possui permissão para acessar o Dashboard da Secretaria.';
+              '';
+
+            this.router
+              .navigateByUrl(
+                '/alunos'
+              );
 
           } else {
 
@@ -292,23 +575,117 @@ export class App implements OnInit {
               'Não foi possível carregar os dados do Dashboard.';
           }
 
+
           this.cdr.detectChanges();
         }
 
       });
   }
 
+
+  podeAcessarDashboard():
+    boolean {
+
+    return (
+      this.sessao
+        ?.perfil
+        ?.toUpperCase() ===
+      'SECRETARIA'
+    );
+  }
+
+
+  nomeUsuario():
+    string {
+
+    return (
+      this.sessao
+        ?.nome
+        ?.trim()
+      ||
+      'Usuário'
+    );
+  }
+
+
+  nomePerfil():
+    string {
+
+    const perfil =
+      this.sessao
+        ?.perfil
+        ?.toUpperCase();
+
+
+    switch (
+      perfil
+      ) {
+
+      case 'SECRETARIA':
+
+        return 'Administrador';
+
+
+      case 'ENCARREGADO_REGIONAL':
+
+        return 'Encarregado Regional';
+
+
+      case 'ENCARREGADO_LOCAL':
+
+        return 'Encarregado Local';
+
+
+      case 'INSTRUTOR':
+
+        return 'Instrutor';
+
+
+      default:
+
+        return (
+          this.sessao
+            ?.perfil
+          ||
+          'Usuário'
+        );
+    }
+  }
+
+
+  tituloArea():
+    string {
+
+    if (
+      this.estaNoDashboard()
+    ) {
+
+      return 'Dashboard da Secretaria';
+    }
+
+
+    return this.nomePerfil();
+  }
+
+
   buscarGlobal(): void {
 
     const termo =
       this.buscaGlobal.trim();
 
-    if (!termo) {
+
+    if (
+      !termo
+    ) {
+
       return;
     }
 
+
     this.router.navigate(
-      ['/alunos'],
+      [
+        '/alunos'
+      ],
       {
         queryParams: {
           busca: termo
@@ -317,47 +694,69 @@ export class App implements OnInit {
     );
   }
 
-  estaNoDashboard(): boolean {
+
+  estaNoDashboard():
+    boolean {
 
     return (
       this.router.url === '/' ||
-      this.router.url === '/dashboard' ||
-      this.router.url.startsWith('/dashboard?')
+      this.router.url ===
+      '/dashboard' ||
+      this.router.url
+        .startsWith(
+          '/dashboard?'
+        )
     );
   }
 
-  percentualAtivos(): number {
+
+  percentualAtivos():
+    number {
 
     if (
       !this.dashboard ||
-      this.dashboard.totalAlunos === 0
+      this.dashboard
+        .totalAlunos === 0
     ) {
+
       return 0;
     }
 
+
     return (
-      this.dashboard.alunosAtivos /
-      this.dashboard.totalAlunos
+      this.dashboard
+        .alunosAtivos /
+      this.dashboard
+        .totalAlunos
     ) * 100;
   }
 
-  percentualArquivados(): number {
+
+  percentualArquivados():
+    number {
 
     if (
       !this.dashboard ||
-      this.dashboard.totalAlunos === 0
+      this.dashboard
+        .totalAlunos === 0
     ) {
+
       return 0;
     }
 
+
     return (
-      this.dashboard.alunosArquivados /
-      this.dashboard.totalAlunos
+      this.dashboard
+        .alunosArquivados /
+      this.dashboard
+        .totalAlunos
     ) * 100;
   }
+
 
   alturaBarra(
-    item: DashboardAlunosPorComum
+    item:
+    DashboardAlunosPorComum
   ): number {
 
     if (
@@ -365,8 +764,10 @@ export class App implements OnInit {
         ?.alunosPorComum
         ?.length
     ) {
+
       return 0;
     }
+
 
     const maiorQuantidade =
       Math.max(
@@ -378,9 +779,14 @@ export class App implements OnInit {
           )
       );
 
-    if (maiorQuantidade === 0) {
+
+    if (
+      maiorQuantidade === 0
+    ) {
+
       return 0;
     }
+
 
     return (
       item.quantidade /
@@ -388,11 +794,14 @@ export class App implements OnInit {
     ) * 80;
   }
 
+
   nomeEvento(
-    tipoEvento: string
+    tipoEvento:
+    string
   ): string {
 
-    const nomes: Record<string, string> = {
+    const nomes:
+      Record<string, string> = {
 
       REGISTRO_MSA:
         'Registro de MSA',
@@ -419,11 +828,28 @@ export class App implements OnInit {
         'Alteração Restrita Aprovada',
 
       ALTERACAO_RESTRITA_ALUNO_REJEITADA:
-        'Alteração Restrita Rejeitada'
+        'Alteração Restrita Rejeitada',
+
+      ARQUIVAMENTO_ALUNO_MOD:
+        'Arquivamento de Aluno no MOD',
+
+      EXCLUSAO_ALUNO_SAM:
+        'Exclusão de Aluno no SAM',
+
+      RESTAURACAO_ALUNO:
+        'Restauração de Aluno',
+
+      COMPARTILHAMENTO_ALUNO:
+        'Compartilhamento de Aluno'
 
     };
 
-    return nomes[tipoEvento] ?? tipoEvento;
+
+    return (
+      nomes[tipoEvento]
+      ??
+      tipoEvento
+    );
   }
 
 }
